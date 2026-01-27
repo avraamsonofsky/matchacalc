@@ -1,0 +1,108 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern";
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+}
+
+/* Принудительно применяем шрифт Inter ко всем элементам */
+h1, h2, h3, h4, h5, h6,
+p, span, a, button, input, select, textarea, label {
+    font-family: var(--font-family);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* Навигация - минималистичная */
+.navbar {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing-sm) 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    letter-spacing: var(--letter-spacing-logo);
+    line-height: var(--line-height-h4);
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    list-style: none;
+}
+
+.nav-menu a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-normal);
+    font-size: var(--font-size-body);
+    letter-spacing: var(--letter-spacing-body);
+    line-height: var(--line-height-body);
+    transition: var(--transition-fast);
+}
+
+.nav-menu a:hover {
+    color: var(--color-accent);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Дисклеймер */
+.disclaimer {
+    margin-top: var(--spacing-xxl);
+    padding: var(--spacing-md);
+    background-color: var(--bg-secondary);
+    font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
+    border-left: 2px solid var(--color-accent);
+    line-height: var(--line-height-small);
+    letter-spacing: var(--letter-spacing-small);
+}
+
+.disclaimer a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.disclaimer a:hover {
+    text-decoration: underline;
+}

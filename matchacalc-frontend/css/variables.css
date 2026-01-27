@@ -1,0 +1,114 @@
+:root {
+    /* Латте стиль - минимализм, светло-серый фон, синий акцент */
+    --bg-primary: #F2F2F2;
+    --bg-secondary: #EAEAEA;
+    --bg-tertiary: #E5E5E5;
+    
+    /* Цвета текста */
+    --color-text-primary: #000000;
+    --color-text-secondary: #333333;
+    --color-text-muted: #666666;
+    --color-text-light: #999999;
+    
+    /* Синий акцент как у Surf Coffee */
+    --color-accent: #0066cc;
+    --color-accent-light: #3388dd;
+    --color-accent-dark: #004499;
+    
+    /* Базовые цвета */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    
+    /* Границы */
+    --color-border: #e0e0e0;
+    --color-border-light: #f0f0f0;
+    
+    /* Шрифты - Inter как у Surf Coffee (прямой, sans-serif) */
+    --font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-sans: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* Размеры шрифтов - оптимизированы для 1920x1200 */
+    --font-size-hero: 72px;  /* Главный заголовок hero */
+    --font-size-h1: 56px;
+    --font-size-h1-mobile: 36px;
+    --font-size-h2: 42px;
+    --font-size-h2-mobile: 28px;
+    --font-size-h3: 28px;
+    --font-size-h4: 20px;
+    --font-size-body: 16px;
+    --font-size-body-large: 18px;
+    --font-size-small: 14px;
+    --font-size-xs: 12px;
+    
+    /* Веса - очень тонкие заголовки */
+    --font-weight-thin: 200;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Типографика - межбуквенные интервалы (letter-spacing) */
+    --letter-spacing-hero: -0.025em;  /* -1.8px для 72px */
+    --letter-spacing-h1: -0.02em;     /* для 56px */
+    --letter-spacing-h1-mobile: -0.01em;
+    --letter-spacing-h2: -0.015em;
+    --letter-spacing-h2-mobile: 0em;
+    --letter-spacing-h3: -0.01em;
+    --letter-spacing-h4: 0em;
+    --letter-spacing-body: 0.01em;    /* 0.16px для 16px */
+    --letter-spacing-body-large: 0.01em;
+    --letter-spacing-small: 0.02em;   /* 0.28px для 14px */
+    --letter-spacing-xs: 0.03em;
+    --letter-spacing-label: 0.04em;   /* для меток и кнопок */
+    --letter-spacing-logo: 0.06em;    /* для логотипа */
+    
+    /* Типографика - межстрочные интервалы (line-height) */
+    --line-height-hero: 0.95;   /* Очень плотный для hero */
+    --line-height-h1: 1.05;
+    --line-height-h2: 1.1;
+    --line-height-h3: 1.2;
+    --line-height-h4: 1.3;
+    --line-height-body: 1.55;   /* Оптимально для чтения */
+    --line-height-body-large: 1.6;
+    --line-height-small: 1.5;
+    --line-height-label: 1.4;
+    --line-height-button: 1.5;
+    
+    /* Отступы - оптимизированы */
+    --spacing-xs: 8px;
+    --spacing-sm: 16px;
+    --spacing-md: 24px;
+    --spacing-lg: 32px;
+    --spacing-xl: 48px;
+    --spacing-xxl: 56px;
+    --spacing-xxxl: 72px;
+    
+    /* Скругления - минимальные */
+    --border-radius: 0px;
+    --border-radius-sm: 4px;
+    --border-radius-lg: 8px;
+    
+    /* Тени - минимальные или отсутствуют */
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    
+    /* Переходы - плавные */
+    --transition: all 0.3s ease;
+    --transition-fast: all 0.15s ease;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --font-size-hero: 42px;
+        --font-size-h1: 36px;
+        --font-size-h2: 28px;
+        --font-size-h3: 22px;
+    }
+}

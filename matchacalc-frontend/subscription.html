@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подписка - ЛаттеCalc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/forms-modern.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">ЛаттеCalc</a>
+            <ul class="nav-menu">
+                <li><a href="login.html" id="nav-login">Вход</a></li>
+                <li><a href="register.html" id="nav-register">Регистрация</a></li>
+                <li><a href="subscription.html" class="active">Подписка</a></li>
+                <li><a href="index.html">Калькулятор</a></li>
+                <li class="hidden"><a href="#" id="nav-profile">Профиль</a></li>
+                <li class="hidden"><a href="#" id="nav-logout">Выход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="subscription-container">
+        <!-- Блок информации о текущей подписке -->
+        <div id="current-subscription-info" class="current-subscription hidden">
+            <div class="subscription-status">
+                <span class="status-label">Ваша подписка:</span>
+                <span id="current-plan-name" class="status-value">—</span>
+            </div>
+            <div class="subscription-expires">
+                <span class="expires-label">Действует до:</span>
+                <span id="subscription-expires-date" class="expires-value">—</span>
+            </div>
+        </div>
+
+        <h1>Выберите подписку</h1>
+        <div class="subscription-plans">
+            <!-- План 1: Без подписки -->
+            <div class="subscription-plan" id="plan-none">
+                <h2>Без подписки</h2>
+                <div class="plan-price">Бесплатно</div>
+                <ul class="plan-features">
+                    <li>Делайте расчёты с ручным вводом</li>
+                    <li>Лимит: 3 расчёта, потом 3 минуты</li>
+                    <li>Нет автозаполнения с Циан</li>
+                    <li>Нет коллекций</li>
+                </ul>
+                <button class="btn-secondary btn-current hidden" id="btn-current-none" disabled>Текущий план</button>
+            </div>
+
+            <!-- План 2: Подписка агента -->
+            <div class="subscription-plan featured" id="plan-agent">
+                <div class="plan-badge">Рекомендуется</div>
+                <h2>Подписка Pro</h2>
+                <div class="plan-price">2 999 ₽<span>/мес</span></div>
+                <ul class="plan-features">
+                    <li>Лимит: 1 расчёт раз в 10 секунд</li>
+                    <li>Автозаполнение с Циан</li>
+                    <li>Коллекции до 20 лотов</li>
+                    <li>Публичные ссылки на коллекции</li>
+                </ul>
+                <button class="btn-primary" id="btn-subscribe-agent">Оформить подписку</button>
+                <button class="btn-secondary btn-current hidden" id="btn-current-agent" disabled>Текущий план</button>
+            </div>
+
+            <!-- План 3: Подписка для застройщика -->
+            <div class="subscription-plan" id="plan-developer">
+                <h2>Подписка для застройщика</h2>
+                <div class="plan-price">По запросу</div>
+                <ul class="plan-features">
+                    <li>Уникальные условия</li>
+                    <li>Расширенный API</li>
+                    <li>Массовый импорт объектов</li>
+                    <li>Агрегированная аналитика портфеля</li>
+                </ul>
+                <button class="btn-secondary" id="btn-contact-developer">Связаться с нами</button>
+                <button class="btn-secondary btn-current hidden" id="btn-current-developer" disabled>Текущий план</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Инициализация авторизации
+            await Auth.init();
+            
+            // Обновление UI в зависимости от подписки
+            updateSubscriptionUI();
+        });
+
+        function updateSubscriptionUI() {
+            const user = Auth.user;
+            const infoBlock = document.getElementById('current-subscription-info');
+            const planNameEl = document.getElementById('current-plan-name');
+            const expiresEl = document.getElementById('subscription-expires-date');
+            
+            // Скрываем все кнопки "Текущий план"
+            document.querySelectorAll('.btn-current').forEach(btn => btn.classList.add('hidden'));
+            // Показываем все кнопки "Оформить"
+            document.getElementById('btn-subscribe-agent')?.classList.remove('hidden');
+            
+            if (!user || !user.subscription) {
+                // Не авторизован или нет подписки
+                infoBlock?.classList.add('hidden');
+                document.getElementById('btn-current-none')?.classList.remove('hidden');
+                return;
+            }
+            
+            const sub = user.subscription;
+            
+            // Показываем блок информации
+            infoBlock?.classList.remove('hidden');
+            
+            // Определяем название плана
+            let planName = 'Без подписки';
+            let currentPlanId = 'none';
+            
+            if (sub.plan === 'agent') {
+                planName = 'Pro (Агент)';
+                currentPlanId = 'agent';
+            } else if (sub.plan === 'developer') {
+                planName = 'Для застройщика';
+                currentPlanId = 'developer';
+            }
+            
+            if (planNameEl) planNameEl.textContent = planName;
+            
+            // Показываем дату окончания
+            if (sub.expires_at && expiresEl) {
+                const expiresDate = new Date(sub.expires_at);
+                expiresEl.textContent = expiresDate.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            } else if (expiresEl) {
+                expiresEl.textContent = 'Бессрочно';
+            }
+            
+            // Показываем кнопку "Текущий план" для активного плана
+            const currentBtn = document.getElementById(`btn-current-${currentPlanId}`);
+            if (currentBtn) {
+                currentBtn.classList.remove('hidden');
+            }
+            
+            // Скрываем кнопку "Оформить" для текущего плана
+            if (currentPlanId === 'agent') {
+                document.getElementById('btn-subscribe-agent')?.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('btn-subscribe-agent')?.addEventListener('click', () => {
+            if (!Auth.user) {
+                alert('Для оформления подписки необходимо войти в аккаунт');
+                window.location.href = 'login.html';
+                return;
+            }
+            // TODO: Интеграция с платёжной системой
+            alert('Функция оплаты будет доступна в ближайшее время');
+        });
+
+        document.getElementById('btn-contact-developer')?.addEventListener('click', () => {
+            window.location.href = 'mailto:support@lattecalc.ru?subject=Подписка для застройщика';
+        });
+    </script>
+</body>
+</html>

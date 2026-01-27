@@ -1,0 +1,95 @@
+/* Блок преимуществ в стиле Surf Coffee */
+.benefits-section {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--bg-primary);
+}
+
+.benefits-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.benefits-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xxl);
+}
+
+.benefits-header h2 {
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-thin);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: var(--letter-spacing-h1);
+    line-height: var(--line-height-h1);
+}
+
+.benefits-header .highlight {
+    color: var(--color-text-primary);
+}
+
+.benefits-header p {
+    font-size: var(--font-size-body-large);
+    color: var(--color-text-secondary);
+    letter-spacing: var(--letter-spacing-body-large);
+    line-height: var(--line-height-body-large);
+}
+
+.comparison-table {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.comparison-table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    background-color: var(--color-text-primary);
+    color: var(--bg-primary);
+    font-weight: var(--font-weight-normal);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    letter-spacing: var(--letter-spacing-label);
+    line-height: var(--line-height-label);
+}
+
+.column-header {
+    text-align: center;
+    font-size: var(--font-size-body);
+}
+
+.comparison-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+}
+
+.comparison-row:last-child {
+    border-bottom: none;
+}
+
+.benefit-name {
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body);
+    letter-spacing: var(--letter-spacing-body);
+    line-height: var(--line-height-body);
+}
+
+.comparison-value {
+    text-align: center;
+}
+
+.check-icon {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-normal);
+}
+
+.cross-icon {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-normal);
+}

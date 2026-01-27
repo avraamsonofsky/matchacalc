@@ -1,0 +1,472 @@
+/* Full-page scroll styles */
+
+html {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+    height: 100%;
+}
+
+body {
+    overflow-x: hidden;
+    height: 100%;
+    touch-action: pan-y; /* Разрешаем вертикальную прокрутку touch */
+}
+
+.fullpage-container {
+    width: 100%;
+}
+
+.fullpage-section {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal; /* Позволяет прокручивать несколько секций подряд */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding: 0 var(--spacing-md);
+}
+
+/* Hero секция */
+.fullpage-section.hero-section {
+    background-color: var(--bg-primary);
+}
+
+/* Калькулятор секция */
+.fullpage-section.calculator-section {
+    background-color: var(--bg-primary);
+    padding-top: 40px;
+    padding-bottom: var(--spacing-md);
+}
+
+/* Заголовок секции */
+.section-header {
+    text-align: left;
+    margin-bottom: var(--spacing-md);
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.section-header h2 {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-light);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-h2);
+    margin: 0;
+}
+
+/* Benefits секция */
+.fullpage-section.benefits-section {
+    background-color: var(--bg-secondary);
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
+}
+
+/* Скрытие навбара при прокрутке */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Индикатор прокрутки */
+.scroll-indicator {
+    position: absolute;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    letter-spacing: var(--letter-spacing-small);
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--color-text-muted);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-8px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-4px);
+    }
+}
+
+/* Hero лого с наложением */
+.brand-stack {
+    position: relative;
+    display: inline-block;
+}
+
+.latte-brand {
+    font-size: var(--font-size-hero);
+    font-weight: var(--font-weight-light);
+    color: var(--color-text-primary);
+    letter-spacing: var(--letter-spacing-hero);
+    line-height: var(--line-height-hero);
+    display: block;
+}
+
+.calc-overlay {
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    font-size: 24px;
+    font-weight: var(--font-weight-normal);
+    color: var(--color-accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* Калькулятор компактный layout */
+.calculator-layout-compact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: stretch;
+}
+
+.results-panel-compact {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.calculator-card-compact {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+}
+
+/* Компактные формы */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-group-compact {
+    margin-bottom: var(--spacing-sm);
+}
+
+.form-group-compact label {
+    display: block;
+    font-size: var(--font-size-small);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+    letter-spacing: var(--letter-spacing-small);
+}
+
+.form-group-compact input,
+.form-group-compact select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: var(--font-size-small);
+    border: 1px solid var(--color-border);
+    background-color: var(--bg-primary);
+    font-family: var(--font-family);
+    transition: var(--transition-fast);
+}
+
+.form-group-compact input:focus,
+.form-group-compact select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.date-input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.date-input-row select {
+    padding: 10px 8px;
+    font-size: var(--font-size-xs);
+}
+
+/* Циан группа */
+.cian-group {
+    margin-bottom: var(--spacing-sm);
+}
+
+.cian-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cian-input-wrapper.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.cian-input-wrapper input {
+    flex: 1;
+    padding-right: 32px;
+}
+
+.cian-input-wrapper input:disabled {
+    background-color: var(--bg-secondary);
+    cursor: not-allowed;
+}
+
+.cian-input-wrapper .info-icon {
+    position: absolute;
+    right: 10px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+}
+
+/* Слайдер компактный */
+.slider-group {
+    margin-bottom: var(--spacing-sm);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    /* Используем box-sizing и padding для компенсации thumb */
+    box-sizing: border-box;
+}
+
+.slider-modern {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--color-border);
+    margin: 0;
+    outline: none;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.slider-modern::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--color-accent);
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.slider-modern::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--color-accent);
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    height: 20px;
+    margin-top: 4px;
+    /* Padding компенсирует смещение thumb'а на краях (thumb width = 18px / 2 = 9px)
+       Это обеспечивает выравнивание меток с центром thumb'а */
+    padding: 0 9px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    box-sizing: border-box;
+}
+
+.slider-ticks span {
+    /* Центрируем текст для точного выравнивания */
+    text-align: center;
+    flex-shrink: 0;
+}
+
+/* Кнопка расчёта */
+.btn-calculate-compact {
+    width: 100%;
+    padding: 14px var(--spacing-md);
+    background-color: var(--color-accent);
+    color: var(--bg-primary);
+    border: none;
+    font-family: var(--font-family);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-label);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    transition: var(--transition);
+    margin-top: var(--spacing-sm);
+}
+
+.btn-calculate-compact:hover {
+    background-color: var(--color-accent-dark);
+}
+
+.btn-calculate-compact svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Результаты компактные */
+.results-panel-compact .results-dashboard-header h3 {
+    font-size: var(--font-size-h4);
+    margin-bottom: var(--spacing-xs);
+}
+
+.results-panel-compact .results-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.results-panel-compact .results-section-title {
+    font-size: var(--font-size-small);
+    padding-bottom: 4px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.results-panel-compact .metric-row {
+    padding: var(--spacing-xs) 0;
+}
+
+.results-panel-compact .metric-label {
+    font-size: var(--font-size-small);
+}
+
+.results-panel-compact .metric-value {
+    font-size: var(--font-size-body-large);
+    transition: color 0.3s ease;
+}
+
+.results-panel-compact .metric-value-small {
+    font-size: var(--font-size-small);
+    transition: color 0.3s ease;
+}
+
+/* Тусклые placeholder значения */
+.metric-value.placeholder,
+.metric-value-small.placeholder {
+    color: var(--color-text-light);
+    opacity: 0.5;
+}
+
+/* Активные значения после расчёта */
+.metric-value.active,
+.metric-value-small.active {
+    color: var(--color-text-primary);
+    opacity: 1;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Дисклеймер компактный */
+.disclaimer-compact {
+    max-width: 1100px;
+    margin: var(--spacing-md) auto 0;
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    letter-spacing: var(--letter-spacing-xs);
+    line-height: var(--line-height-small);
+}
+
+/* Футер с ссылками */
+.footer-links {
+    position: absolute;
+    bottom: var(--spacing-md);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.footer-links a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.disclaimer-compact p {
+    margin-bottom: var(--spacing-xs);
+}
+
+.disclaimer-compact a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.disclaimer-compact a:hover {
+    text-decoration: underline;
+}
+
+/* Адаптивность */
+@media (max-width: 968px) {
+    .calculator-layout-compact {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .results-panel-compact {
+        order: -1;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .latte-brand {
+        font-size: 48px;
+    }
+    
+    .calc-overlay {
+        font-size: 16px;
+        bottom: -4px;
+    }
+}

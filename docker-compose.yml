@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-matchacalc
+    environment:
+      POSTGRES_DB: matchacalc
+      POSTGRES_USER: matchacalc
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U matchacalc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-matchacalc
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./matchacalc-backend
+    container_name: matchacalc-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://matchacalc:secret@postgres:5432/matchacalc
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-secret-key-change-in-production
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      RATE_LIMIT_GUEST: 180
+      RATE_LIMIT_USER: 60
+      RATE_LIMIT_SUBSCRIBER: 10
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./matchacalc-backend:/app
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

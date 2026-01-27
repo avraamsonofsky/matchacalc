@@ -1,0 +1,122 @@
+/* Результаты в стиле Surf Coffee - строки, такой же ширины как форма */
+.results-panel-modern {
+    background-color: var(--bg-primary);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--color-border);
+    height: fit-content;
+}
+
+.results-dashboard-modern {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.results-dashboard-header h3 {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: var(--font-size-h3);
+    font-weight: 400 !important;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: var(--letter-spacing-h3);
+    line-height: var(--line-height-h3);
+}
+
+.results-placeholder {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-body);
+    letter-spacing: var(--letter-spacing-body);
+    line-height: var(--line-height-body);
+}
+
+.results-content-modern.hidden {
+    display: none;
+}
+
+/* Разделение на статичные и динамические */
+.results-section {
+    margin-bottom: var(--spacing-xl);
+}
+
+.results-section-title {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-md);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label);
+    line-height: var(--line-height-label);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-xs);
+}
+
+/* Метрики строками */
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.metric-row:last-child {
+    border-bottom: none;
+}
+
+.metric-label {
+    font-size: var(--font-size-body);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-normal);
+    letter-spacing: var(--letter-spacing-body);
+    line-height: var(--line-height-body);
+}
+
+.metric-values {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.metric-value {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-thin);
+    color: var(--color-text-primary);
+    text-align: right;
+    letter-spacing: var(--letter-spacing-h3);
+    line-height: var(--line-height-h3);
+}
+
+.metric-value-small {
+    font-size: var(--font-size-body-large);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-muted);
+    letter-spacing: var(--letter-spacing-body-large);
+    line-height: var(--line-height-body-large);
+}
+
+/* Статичные метрики */
+.static-metrics {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Динамические метрики */
+.dynamic-metrics {
+    margin-top: var(--spacing-xl);
+}
+
+@media (max-width: 968px) {
+    .calculator-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-panel-modern {
+        order: -1; /* Результаты сверху на мобильных */
+    }
+    
+    .metric-value {
+        font-size: var(--font-size-h4);
+        letter-spacing: var(--letter-spacing-h4);
+        line-height: var(--line-height-h4);
+    }
+}

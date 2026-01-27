@@ -1,0 +1,100 @@
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .calculator-layout {
+        gap: var(--spacing-lg);
+    }
+}
+
+@media (max-width: 968px) {
+    .hero-content-modern {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .matcha-brand,
+    .calc-brand {
+        font-size: var(--font-size-h1-mobile);
+    }
+    
+    .line-1,
+    .line-2 {
+        font-size: var(--font-size-h2-mobile);
+    }
+    
+    .calculator-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .comparison-table-header,
+    .comparison-row {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+    
+    .column-header {
+        text-align: left;
+        padding: var(--spacing-xs) 0;
+    }
+    
+    .comparison-value {
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .navbar-container {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .hero-modern {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .hero-visual-modern {
+        height: 200px;
+    }
+    
+    .decorative-circle {
+        min-width: 80px;
+        padding: var(--spacing-sm);
+    }
+    
+    .decorative-circle .value {
+        font-size: var(--font-size-h4);
+    }
+    
+    .decorative-circle .label {
+        font-size: var(--font-size-xs);
+    }
+    
+    .calculator-card,
+    .results-panel-modern {
+        padding: var(--spacing-md);
+    }
+    
+    .metrics-grid-modern {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .navbar-container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .hero-content-modern,
+    .calculator-layout,
+    .benefits-container {
+        padding: 0 var(--spacing-sm);
+    }
+}

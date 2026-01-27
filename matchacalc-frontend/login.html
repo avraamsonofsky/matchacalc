@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - ЛаттеCalc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/forms-modern.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">ЛаттеCalc</a>
+            <ul class="nav-menu">
+                <li><a href="login.html" id="nav-login" class="active">Вход</a></li>
+                <li><a href="register.html" id="nav-register">Регистрация</a></li>
+                <li><a href="subscription.html">Подписка</a></li>
+                <li><a href="index.html">Калькулятор</a></li>
+                <li class="hidden"><a href="#" id="nav-profile">Профиль</a></li>
+                <li class="hidden"><a href="#" id="nav-logout">Выход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>Вход</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-primary">Войти</button>
+            </form>
+            <p class="auth-link">
+                Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Auth.init();
+        });
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await API.login(email, password);
+                if (response.access_token) {
+                    localStorage.setItem('access_token', response.access_token);
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                alert('Ошибка входа: ' + (error.message || 'Неверный email или пароль'));
+            }
+        });
+    </script>
+</body>
+</html>

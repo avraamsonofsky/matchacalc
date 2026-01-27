@@ -1,0 +1,76 @@
+/* Глобальные стили типографики - эталонные практики дизайна */
+
+/* Заголовки */
+h1, .h1 {
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
+    line-height: var(--line-height-h1);
+    letter-spacing: var(--letter-spacing-h1);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+h2, .h2 {
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
+    line-height: var(--line-height-h2);
+    letter-spacing: var(--letter-spacing-h2);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+h3, .h3 {
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
+    line-height: var(--line-height-h3);
+    letter-spacing: var(--letter-spacing-h3);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+h4, .h4 {
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-h4);
+    letter-spacing: var(--letter-spacing-h4);
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Параграфы */
+p {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Ссылки */
+a {
+    letter-spacing: var(--letter-spacing-body);
+    line-height: var(--line-height-body);
+}
+
+/* Кнопки */
+button {
+    letter-spacing: var(--letter-spacing-label);
+    line-height: var(--line-height-button);
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+    h1, .h1 {
+        font-size: var(--font-size-h1-mobile);
+        letter-spacing: var(--letter-spacing-h1-mobile);
+    }
+    
+    h2, .h2 {
+        font-size: var(--font-size-h2-mobile);
+        letter-spacing: var(--letter-spacing-h2-mobile);
+    }
+    
+    h3, .h3 {
+        font-size: var(--font-size-h3);
+    }
+}

@@ -1,0 +1,290 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-19T20:46:14.069182",
+    "source": "Nikoliers, NF GROUP, CBRE",
+    "market": "Moscow Commercial Real Estate",
+    "data_points_total": 27,
+    "reports_count": 3
+  },
+  "reports": [
+    {
+      "market_report": {
+        "provider": "nikoliers",
+        "title": "Обзор рынка коммерческой недвижимости Москвы Q4 2024",
+        "period": "2024-Q4",
+        "file_url": "https://nikoliers.com/upload/iblock/845/nikoliers-moscow-commercial-2024-q4.pdf",
+        "active": true
+      },
+      "values_count": 9,
+      "market_report_values": [
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A_Prime",
+          "rent_start": 35000.0,
+          "rent_growth_annual": 0.05,
+          "price_per_m2_start": 450000.0,
+          "price_growth_annual": 0.03,
+          "vacancy_rate": 0.08
+        },
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A",
+          "rent_start": 28000.0,
+          "rent_growth_annual": 0.05,
+          "price_per_m2_start": 380000.0,
+          "price_growth_annual": 0.03,
+          "vacancy_rate": 0.1
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "A",
+          "rent_start": 24000.0,
+          "rent_growth_annual": 0.04,
+          "price_per_m2_start": 320000.0,
+          "price_growth_annual": 0.03,
+          "vacancy_rate": 0.12
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "B_plus",
+          "rent_start": 18000.0,
+          "rent_growth_annual": 0.04,
+          "price_per_m2_start": 240000.0,
+          "price_growth_annual": 0.025,
+          "vacancy_rate": 0.15
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "A",
+          "rent_start": 26000.0,
+          "rent_growth_annual": 0.045,
+          "price_per_m2_start": 400000.0,
+          "price_growth_annual": 0.032,
+          "vacancy_rate": 0.11
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "B_plus",
+          "rent_start": 19000.0,
+          "rent_growth_annual": 0.04,
+          "price_per_m2_start": 260000.0,
+          "price_growth_annual": 0.025,
+          "vacancy_rate": 0.14
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B_plus",
+          "rent_start": 15000.0,
+          "rent_growth_annual": 0.035,
+          "price_per_m2_start": 200000.0,
+          "price_growth_annual": 0.02,
+          "vacancy_rate": 0.18
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B",
+          "rent_start": 12000.0,
+          "rent_growth_annual": 0.03,
+          "price_per_m2_start": 150000.0,
+          "price_growth_annual": 0.018,
+          "vacancy_rate": 0.2
+        },
+        {
+          "location_group_id": "outside_mkad",
+          "property_class": "B",
+          "rent_start": 10000.0,
+          "rent_growth_annual": 0.03,
+          "price_per_m2_start": 120000.0,
+          "price_growth_annual": 0.015,
+          "vacancy_rate": 0.22
+        }
+      ]
+    },
+    {
+      "market_report": {
+        "provider": "nf_group",
+        "title": "Анализ офисного рынка Москвы Q1 2025",
+        "period": "2025-Q1",
+        "file_url": "https://nf-group.ru/upload/research/moscow-office-market-q1-2025.pdf",
+        "active": true
+      },
+      "values_count": 9,
+      "market_report_values": [
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A_Prime",
+          "rent_start": 37400.0,
+          "rent_growth_annual": 0.06,
+          "price_per_m2_start": 480000.0,
+          "price_growth_annual": 0.035,
+          "vacancy_rate": 0.068
+        },
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A",
+          "rent_start": 30000.0,
+          "rent_growth_annual": 0.055,
+          "price_per_m2_start": 400000.0,
+          "price_growth_annual": 0.032,
+          "vacancy_rate": 0.088
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "A",
+          "rent_start": 25500.0,
+          "rent_growth_annual": 0.045,
+          "price_per_m2_start": 340000.0,
+          "price_growth_annual": 0.032,
+          "vacancy_rate": 0.11
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "B_plus",
+          "rent_start": 19000.0,
+          "rent_growth_annual": 0.042,
+          "price_per_m2_start": 260000.0,
+          "price_growth_annual": 0.028,
+          "vacancy_rate": 0.135
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "A",
+          "rent_start": 28500.0,
+          "rent_growth_annual": 0.048,
+          "price_per_m2_start": 430000.0,
+          "price_growth_annual": 0.035,
+          "vacancy_rate": 0.095
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "B_plus",
+          "rent_start": 20000.0,
+          "rent_growth_annual": 0.043,
+          "price_per_m2_start": 280000.0,
+          "price_growth_annual": 0.027,
+          "vacancy_rate": 0.128
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B_plus",
+          "rent_start": 16000.0,
+          "rent_growth_annual": 0.038,
+          "price_per_m2_start": 220000.0,
+          "price_growth_annual": 0.024,
+          "vacancy_rate": 0.155
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B",
+          "rent_start": 12500.0,
+          "rent_growth_annual": 0.032,
+          "price_per_m2_start": 165000.0,
+          "price_growth_annual": 0.02,
+          "vacancy_rate": 0.175
+        },
+        {
+          "location_group_id": "outside_mkad",
+          "property_class": "B",
+          "rent_start": 10500.0,
+          "rent_growth_annual": 0.032,
+          "price_per_m2_start": 135000.0,
+          "price_growth_annual": 0.018,
+          "vacancy_rate": 0.195
+        }
+      ]
+    },
+    {
+      "market_report": {
+        "provider": "cbre",
+        "title": "Обзор офисного рынка Москвы 2025",
+        "period": "2025-H1",
+        "file_url": "https://cbre.ru/research/moscow-office-market-2025-h1.pdf",
+        "active": true
+      },
+      "values_count": 9,
+      "market_report_values": [
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A_Prime",
+          "rent_start": 38000.0,
+          "rent_growth_annual": 0.062,
+          "price_per_m2_start": 500000.0,
+          "price_growth_annual": 0.038,
+          "vacancy_rate": 0.065
+        },
+        {
+          "location_group_id": "moscow_city",
+          "property_class": "A",
+          "rent_start": 31000.0,
+          "rent_growth_annual": 0.058,
+          "price_per_m2_start": 420000.0,
+          "price_growth_annual": 0.035,
+          "vacancy_rate": 0.082
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "A",
+          "rent_start": 26500.0,
+          "rent_growth_annual": 0.048,
+          "price_per_m2_start": 360000.0,
+          "price_growth_annual": 0.034,
+          "vacancy_rate": 0.105
+        },
+        {
+          "location_group_id": "big_city",
+          "property_class": "B_plus",
+          "rent_start": 20000.0,
+          "rent_growth_annual": 0.045,
+          "price_per_m2_start": 280000.0,
+          "price_growth_annual": 0.03,
+          "vacancy_rate": 0.13
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "A",
+          "rent_start": 29500.0,
+          "rent_growth_annual": 0.05,
+          "price_per_m2_start": 450000.0,
+          "price_growth_annual": 0.036,
+          "vacancy_rate": 0.09
+        },
+        {
+          "location_group_id": "center_ttk",
+          "property_class": "B_plus",
+          "rent_start": 21000.0,
+          "rent_growth_annual": 0.045,
+          "price_per_m2_start": 300000.0,
+          "price_growth_annual": 0.029,
+          "vacancy_rate": 0.122
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B_plus",
+          "rent_start": 17000.0,
+          "rent_growth_annual": 0.04,
+          "price_per_m2_start": 240000.0,
+          "price_growth_annual": 0.026,
+          "vacancy_rate": 0.148
+        },
+        {
+          "location_group_id": "mkad_outside_ttk",
+          "property_class": "B",
+          "rent_start": 13500.0,
+          "rent_growth_annual": 0.035,
+          "price_per_m2_start": 180000.0,
+          "price_growth_annual": 0.022,
+          "vacancy_rate": 0.168
+        },
+        {
+          "location_group_id": "outside_mkad",
+          "property_class": "B",
+          "rent_start": 11000.0,
+          "rent_growth_annual": 0.035,
+          "price_per_m2_start": 145000.0,
+          "price_growth_annual": 0.02,
+          "vacancy_rate": 0.188
+        }
+      ]
+    }
+  ]
+}

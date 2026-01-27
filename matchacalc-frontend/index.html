@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЛаттеCalc - Калькулятор доходности недвижимости</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/hero-section.css">
+    <link rel="stylesheet" href="css/benefits-section.css">
+    <link rel="stylesheet" href="css/forms-modern.css">
+    <link rel="stylesheet" href="css/results-modern.css">
+    <link rel="stylesheet" href="css/dropdown-fix.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/fullpage.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+    <!-- Навигация (скрывается при прокрутке) -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">ЛаттеCalc</a>
+            <ul class="nav-menu">
+                <li><a href="login.html" id="nav-login">Вход</a></li>
+                <li><a href="register.html" id="nav-register">Регистрация</a></li>
+                <li><a href="subscription.html">Подписка</a></li>
+                <li><a href="contacts.html">Контакты</a></li>
+                <li id="nav-collections" class="hidden"><a href="collections.html">Коллекции</a></li>
+                <li class="hidden" id="nav-admin"><a href="admin.html" style="color: var(--color-error);">Admin</a></li>
+                <li class="hidden"><a href="#" id="nav-profile">Профиль</a></li>
+                <li class="hidden"><a href="#" id="nav-logout">Выход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Full-page scroll контейнер -->
+    <div class="fullpage-container" id="fullpage-container">
+        
+        <!-- Секция 1: Hero -->
+        <section class="fullpage-section hero-section" data-section="0">
+            <div class="hero-content-modern">
+                <!-- Левая часть - текст -->
+                <div class="hero-text-modern">
+                    <div class="hero-logo-modern">
+                        <div class="brand-stack">
+                            <span class="latte-brand">ЛАТТЕ</span>
+                            <span class="calc-overlay">калькулятор</span>
+                        </div>
+                    </div>
+                    <h2 class="hero-headline-modern">
+                        <span class="line-1">Считай доходность</span>
+                        <span class="line-2">помещений, пока пьёшь латте</span>
+                    </h2>
+                    <p class="hero-description-modern">
+                        Простой и честный калькулятор для оценки инвестиционной привлекательности 
+                        коммерческой недвижимости Москвы на основе открытых консалтинговых отчётов.
+                    </p>
+                    <a href="#calculator" class="hero-cta-modern" id="scroll-to-calc">
+                        Начать расчёт
+                        <svg class="arrow" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Индикатор прокрутки -->
+            <div class="scroll-indicator">
+                <span>Прокрутите вниз</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Секция 2: Калькулятор -->
+        <section class="fullpage-section calculator-section" id="calculator" data-section="1">
+            <div class="section-header">
+                <h2>Калькулятор доходности</h2>
+            </div>
+            <div class="calculator-layout-compact">
+                <!-- Результаты слева -->
+                <div class="results-panel-compact" id="results-panel">
+                    <div class="results-dashboard-modern">
+                        <div class="results-dashboard-header">
+                            <h3>Результаты расчёта</h3>
+                        </div>
+                        
+                        <div id="results" class="results-content-modern">
+                            <!-- Статичные метрики -->
+                            <div class="results-section static-metrics">
+                                <div class="results-section-title">Статичные показатели</div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Окупаемость: аренда</span>
+                                    <span class="metric-value placeholder" id="payback-rent">12 лет 4 мес</span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Окупаемость: аренда + продажа</span>
+                                    <span class="metric-value placeholder" id="payback-rent-sale">7 лет 8 мес</span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Срок удвоения стоимости</span>
+                                    <span class="metric-value placeholder" id="double-price">9 лет 2 мес</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Динамические метрики -->
+                            <div class="results-section dynamic-metrics">
+                                <div class="results-section-title">Динамические показатели</div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Прибыль от аренды</span>
+                                    <span class="metric-values">
+                                        <span class="metric-value-small placeholder" id="rent-yield">(94.8%)</span>
+                                        <span class="metric-value placeholder" id="rent-income">28 350 000 ₽</span>
+                                    </span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Прибыль от продажи</span>
+                                    <span class="metric-values">
+                                        <span class="metric-value-small placeholder" id="sale-profit-percent">(22.8%)</span>
+                                        <span class="metric-value placeholder" id="sale-profit">9 100 000 ₽</span>
+                                    </span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">Совокупная прибыль</span>
+                                    <span class="metric-values">
+                                        <span class="metric-value-small placeholder" id="total-profit-percent">(117.6%)</span>
+                                        <span class="metric-value placeholder" id="total-profit">47 050 000 ₽</span>
+                                    </span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">NPV</span>
+                                    <span class="metric-value placeholder" id="npv">18 420 000 ₽</span>
+                                </div>
+                                
+                                <div class="metric-row">
+                                    <span class="metric-label">IRR</span>
+                                    <span class="metric-value placeholder" id="irr">15.3%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Калькулятор справа -->
+                <div class="calculator-card-compact">
+                    <form id="calculator-form">
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label for="purchase-price">Стоимость (₽)</label>
+                                <input type="text" id="purchase-price" name="purchase-price" placeholder="50 000 000" required inputmode="numeric" pattern="[0-9\s]*">
+                            </div>
+                            <div class="form-group-compact">
+                                <label for="area">Площадь (м²)</label>
+                                <input type="number" id="area" name="area" placeholder="150" required min="0" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="form-group-compact cian-group">
+                            <label for="cian-url">Ссылка из Циан</label>
+                            <div class="cian-input-wrapper" id="cian-wrapper">
+                                <input type="url" id="cian-url" name="cian-url" placeholder="https://www.cian.ru/..." disabled>
+                                <span class="info-icon" title="Доступно только по подписке">i</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label for="location-group">Район Москвы</label>
+                                <select id="location-group" name="location-group" required>
+                                    <option value="">Выберите район...</option>
+                                </select>
+                            </div>
+                            <div class="form-group-compact">
+                                <label>Дата разрешения на ввод</label>
+                                <div class="date-input-row">
+                                    <select id="rve-month" name="rve-month">
+                                        <option value="">Мес</option>
+                                        <option value="1">Янв</option>
+                                        <option value="2">Фев</option>
+                                        <option value="3">Мар</option>
+                                        <option value="4">Апр</option>
+                                        <option value="5">Май</option>
+                                        <option value="6">Июн</option>
+                                        <option value="7">Июл</option>
+                                        <option value="8">Авг</option>
+                                        <option value="9">Сен</option>
+                                        <option value="10">Окт</option>
+                                        <option value="11">Ноя</option>
+                                        <option value="12">Дек</option>
+                                    </select>
+                                    <select id="rve-year" name="rve-year">
+                                        <option value="">Год</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-compact slider-group">
+                            <label for="holding-years">Срок владения: <span id="holding-years-value">7 лет</span></label>
+                            <div class="slider-container">
+                                <input type="range" id="holding-years" name="holding-years" min="1" max="15" value="7" class="slider-modern" list="years-list">
+                                <datalist id="years-list">
+                                    <option value="1"></option>
+                                    <option value="2"></option>
+                                    <option value="3"></option>
+                                    <option value="4"></option>
+                                    <option value="5"></option>
+                                    <option value="6"></option>
+                                    <option value="7"></option>
+                                    <option value="8"></option>
+                                    <option value="9"></option>
+                                    <option value="10"></option>
+                                    <option value="11"></option>
+                                    <option value="12"></option>
+                                    <option value="13"></option>
+                                    <option value="14"></option>
+                                    <option value="15"></option>
+                                </datalist>
+                                <div class="slider-ticks">
+                                    <span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>11</span><span>13</span><span>15</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label for="scenario">Прогноз</label>
+                                <select id="scenario" name="scenario" required>
+                                    <option value="">Сценарий...</option>
+                                </select>
+                            </div>
+                            <div class="form-group-compact">
+                                <label for="report">Отчёт</label>
+                                <select id="report" name="report" required>
+                                    <option value="">Отчёт...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="button" id="calculate-btn" class="btn-calculate-compact">
+                            Рассчитать
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M5 3L11 8L5 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Дисклеймер под формами -->
+            <div class="disclaimer-compact">
+                <p>
+                    <strong>Важно:</strong> Калькулятор не является инвестиционной рекомендацией. 
+                    Расчёты основаны на открытых данных консалтинговых отчётов.
+                </p>
+            </div>
+        </section>
+
+        <!-- Секция 3: Преимущества -->
+        <section class="fullpage-section benefits-section" data-section="2">
+            <div class="benefits-container">
+                <div class="benefits-header">
+                    <h2>Почему <span class="highlight">ЛаттеCalc</span>? Смотри разницу.</h2>
+                    <p>Мы используем открытые данные консалтинговых отчётов и детальную математическую модель для точных расчётов.</p>
+                </div>
+                
+                <div class="comparison-table">
+                    <div class="comparison-table-header">
+                        <div class="column-header benefits-col">Преимущества</div>
+                        <div class="column-header matchacalc-col">ЛаттеCalc</div>
+                        <div class="column-header regular-col">Обычный калькулятор</div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Честные данные из консалтинга</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Детальная модель кэш-флоу</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Сценарный анализ (пессимистичный, базовый, оптимистичный)</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Расчёт NPV и IRR</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Понятная окупаемость с учётом аренды и продажи</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                    
+                    <div class="comparison-row">
+                        <div class="benefit-name">Автозаполнение из Циан (для подписчиков)</div>
+                        <div class="comparison-value"><span class="check-icon">✓</span></div>
+                        <div class="comparison-value"><span class="cross-icon">✗</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Футер с ссылками -->
+            <div class="footer-links">
+                <a href="/privacy.html">Политика конфиденциальности</a> | 
+                <a href="/terms.html">Условия использования</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Модалка ограничения по подписке -->
+    <div id="subscription-limit-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Снимите все лимиты</h2>
+            <p>Воспользуйтесь подпиской Pro для неограниченных расчётов и доступа к автозаполнению из Циан.</p>
+            <div class="modal-actions">
+                <button class="btn-primary" onclick="window.location.href='subscription.html'">Подробнее</button>
+                <button class="btn-secondary" onclick="AccessControl.hideSubscriptionModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/access-control.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/calculator.js"></script>
+    <script src="js/fullpage.js"></script>
+    <script>
+        // Инициализация в правильном порядке
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Сначала убеждаемся, что навбар и меню видимы
+            const navbar = document.getElementById('navbar');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (navbar) {
+                navbar.classList.remove('hidden');
+                navbar.style.display = '';
+                navbar.style.opacity = '1';
+                navbar.style.transform = 'translateY(0)';
+            }
+            
+            // КРИТИЧНО: Убеждаемся, что nav-menu всегда видим
+            if (navMenu) {
+                navMenu.classList.remove('hidden');
+                navMenu.style.display = 'flex';
+            }
+            
+            // Сразу показываем гостевую навигацию (до проверки авторизации)
+            // Это предотвратит мерцание
+            const navLogin = document.getElementById('nav-login');
+            const navRegister = document.getElementById('nav-register');
+            if (navLogin && navLogin.parentElement) {
+                navLogin.parentElement.classList.remove('hidden');
+                navLogin.parentElement.style.display = 'list-item';
+            }
+            if (navRegister && navRegister.parentElement) {
+                navRegister.parentElement.classList.remove('hidden');
+                navRegister.parentElement.style.display = 'list-item';
+            }
+            
+            // Затем инициализируем Auth (проверка авторизации и обновление навигации)
+            await Auth.init();
+            
+            // Затем инициализируем AccessControl (использует данные из Auth)
+            await AccessControl.init();
+            
+            // Управление доступом к полю Циан
+            const cianInput = document.getElementById('cian-url');
+            const cianWrapper = document.getElementById('cian-wrapper');
+            
+            if (AccessControl.canUseCian()) {
+                if (cianInput) cianInput.disabled = false;
+                if (cianWrapper) cianWrapper.classList.remove('disabled');
+            } else {
+                if (cianInput) {
+                    cianInput.disabled = true;
+                    cianInput.addEventListener('focus', () => {
+                        AccessControl.showSubscriptionModal();
+                    });
+                }
+                if (cianWrapper) cianWrapper.classList.add('disabled');
+            }
+            
+            // Финальная проверка - убеждаемся, что навбар и элементы меню видимы
+            setTimeout(() => {
+                if (navbar && window.scrollY < 100) {
+                    navbar.classList.remove('hidden');
+                    navbar.style.display = '';
+                    navbar.style.opacity = '1';
+                    navbar.style.transform = 'translateY(0)';
+                }
+                
+                // КРИТИЧНО: Гарантируем, что nav-menu всегда видим
+                const navMenuCheck = document.querySelector('.nav-menu');
+                if (navMenuCheck) {
+                    navMenuCheck.classList.remove('hidden');
+                    navMenuCheck.style.display = 'flex';
+                }
+                
+                // Дополнительная проверка элементов меню
+                if (navLogin && navLogin.parentElement) {
+                    const parent = navLogin.parentElement;
+                    if (!parent.classList.contains('hidden') || Auth.user === null) {
+                        parent.style.display = 'list-item';
+                    }
+                }
+                if (navRegister && navRegister.parentElement) {
+                    const parent = navRegister.parentElement;
+                    if (!parent.classList.contains('hidden') || Auth.user === null) {
+                        parent.style.display = 'list-item';
+                    }
+                }
+            }, 300);
+        });
+    </script>
+</body>
+</html>

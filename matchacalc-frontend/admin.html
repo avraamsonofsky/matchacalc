@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЛаттеCalc - Админка</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/forms-modern.css">
+    <style>
+        body {
+            background-color: var(--color-bg-light);
+            padding-top: 80px;
+        }
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .admin-nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .admin-nav button {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .admin-nav button.active {
+            border-bottom-color: var(--color-accent);
+            color: var(--color-accent);
+            font-weight: 500;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .data-table th {
+            background-color: var(--color-bg-light);
+            font-weight: 600;
+        }
+        .data-table input {
+            width: 100%;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid transparent;
+            background: transparent;
+            border-radius: 4px;
+        }
+        .data-table input:focus {
+            border-color: var(--color-accent);
+            background: white;
+        }
+        .data-table input.changed {
+            background-color: #fff3cd;
+        }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-active {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--color-border);
+            background: white;
+            font-size: 0.8rem;
+        }
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .error-message {
+            color: var(--color-error);
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #fff0f0;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">ЛаттеCalc <span style="font-size: 0.8em; opacity: 0.7;">Admin</span></a>
+            <ul class="nav-menu">
+                <li><a href="index.html">На сайт</a></li>
+                <li><a href="#" id="nav-logout">Выход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Управление данными</h1>
+            <div id="status-message"></div>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+
+        <div class="admin-nav">
+            <button class="active" onclick="switchTab('reports')">Отчёты</button>
+            <button onclick="switchTab('values')">Коэффициенты (Values)</button>
+            <button onclick="switchTab('scenarios')">Сценарии</button>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="tab-reports" class="tab-content">
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+                <select id="report-selector" onchange="loadReportValues(this.value)">
+                    <option value="">Выберите отчёт для просмотра деталей...</option>
+                </select>
+                <button class="btn-primary" onclick="createNewReport()">+ Новый отчёт</button>
+            </div>
+            
+            <table class="data-table" id="reports-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Провайдер</th>
+                        <th>Название</th>
+                        <th>Период</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Values Tab -->
+        <div id="tab-values" class="tab-content hidden">
+            <div style="margin-bottom: 1rem;">
+                <p>Редактирование значений для отчёта: <strong id="current-report-name">-</strong></p>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="data-table" id="values-table">
+                    <thead>
+                        <tr>
+                            <th>Район (ID)</th>
+                            <th>Класс</th>
+                            <th>Аренда (₽/м²)</th>
+                            <th>Рост Аренды (%)</th>
+                            <th>Цена (₽/м²)</th>
+                            <th>Рост Цены (%)</th>
+                            <th>Вакансия (%)</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Scenarios Tab -->
+        <div id="tab-scenarios" class="tab-content hidden">
+            <table class="data-table" id="scenarios-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Рост Аренды (k)</th>
+                        <th>Рост Цены (k)</th>
+                        <th>Корр. Ставки</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
