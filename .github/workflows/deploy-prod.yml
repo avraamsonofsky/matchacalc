@@ -45,21 +45,19 @@ jobs:
             set -x
             
             echo "=== Step 1: Stopping old backend process ==="
-            # Безопасная остановка: находим PID и убиваем только его
-            OLD_PID=$(pgrep -f "uvicorn.*app.main:app.*3000" || true)
-            if [ ! -z "$OLD_PID" ]; then
-              echo "Found old process with PID: $OLD_PID"
-              kill $OLD_PID 2>/dev/null || true
-              sleep 2
-              # Проверяем, что процесс действительно остановился
-              if ps -p $OLD_PID > /dev/null 2>&1; then
-                echo "Process still running, force killing..."
-                kill -9 $OLD_PID 2>/dev/null || true
-              fi
+            # Освобождаем порт 3000, если он занят
+            if command -v fuser >/dev/null 2>&1; then
+              fuser -k 3000/tcp 2>/dev/null || true
+              sleep 1
             else
-              echo "No old process found"
+              # Если fuser нет, пытаемся найти и убить процесс на порту
+              PORT_PID=$(lsof -ti:3000 2>/dev/null || true)
+              if [ ! -z "$PORT_PID" ]; then
+                echo "Found process using port 3000: $PORT_PID"
+                kill $PORT_PID 2>/dev/null || true
+                sleep 1
+              fi
             fi
-            sleep 1
             
             echo "=== Step 2: Changing to backend directory ==="
             cd /root/matchacalc-backend || { echo "Directory not found!"; exit 1; }
@@ -90,8 +88,10 @@ jobs:
             export RATE_LIMIT_SUBSCRIBER=10
             
             echo "=== Step 7: Starting backend on port 3000 ==="
+            # Запускаем процесс полностью отвязанным от SSH сессии
             nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 3000 > /root/backend-prod.log 2>&1 &
             BACKEND_PID=$!
+            disown $BACKEND_PID 2>/dev/null || true
             echo "Backend started with PID: $BACKEND_PID"
             
             echo "=== Step 8: Waiting for backend to start ==="
