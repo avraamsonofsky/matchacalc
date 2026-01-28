@@ -42,24 +42,31 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           script: |
             set -e
-            echo "=== Stopping old backend process ==="
-            pkill -f "uvicorn.*matchacalc.*staging" || pkill -f "uvicorn.*app.main:app.*8080" || true
+            set -x
+            
+            echo "=== Step 1: Stopping old backend process ==="
+            pkill -f "uvicorn.*app.main:app.*8080" 2>/dev/null || true
             sleep 2
             
-            echo "=== Setting up backend directory ==="
-            cd /root/matchacalc-backend
+            echo "=== Step 2: Changing to backend directory ==="
+            cd /root/matchacalc-backend || { echo "Directory not found!"; exit 1; }
+            pwd
             
-            echo "=== Creating virtual environment if needed ==="
+            echo "=== Step 3: Creating virtual environment if needed ==="
             if [ ! -d ".venv" ]; then
-              python3 -m venv .venv
+              python3 -m venv .venv || { echo "Failed to create venv!"; exit 1; }
             fi
             
-            echo "=== Activating virtual environment and installing dependencies ==="
-            source .venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
+            echo "=== Step 4: Activating virtual environment ==="
+            source .venv/bin/activate || { echo "Failed to activate venv!"; exit 1; }
+            which python
+            which pip
             
-            echo "=== Setting environment variables ==="
+            echo "=== Step 5: Installing/updating dependencies ==="
+            pip install --upgrade pip --quiet
+            pip install -r requirements.txt --quiet || { echo "Failed to install dependencies!"; exit 1; }
+            
+            echo "=== Step 6: Setting environment variables ==="
             export DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}"
             export REDIS_URL="${{ secrets.STAGING_REDIS_URL }}"
             export JWT_SECRET="${{ secrets.JWT_SECRET }}"
@@ -69,16 +76,29 @@ jobs:
             export RATE_LIMIT_USER=60
             export RATE_LIMIT_SUBSCRIBER=10
             
-            echo "=== Starting backend on port 8080 ==="
+            echo "=== Step 7: Starting backend on port 8080 ==="
             nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080 > /root/backend-staging.log 2>&1 &
+            BACKEND_PID=$!
+            echo "Backend started with PID: $BACKEND_PID"
             
-            echo "=== Waiting for backend to start ==="
-            sleep 5
+            echo "=== Step 8: Waiting for backend to start ==="
+            sleep 3
             
-            echo "=== Checking if backend is running ==="
-            ps aux | grep "[u]vicorn.*8080" || (echo "Backend not running!" && exit 1)
+            echo "=== Step 9: Checking if backend process is running ==="
+            if ps -p $BACKEND_PID > /dev/null 2>&1; then
+              echo "Backend process is running (PID: $BACKEND_PID)"
+            else
+              echo "Backend process died! Checking logs:"
+              tail -20 /root/backend-staging.log || true
+              exit 1
+            fi
             
-            echo "=== Testing backend health ==="
-            curl -f http://localhost:8080/api/v1/health || (echo "Health check failed!" && exit 1)
+            echo "=== Step 10: Testing backend health endpoint ==="
+            sleep 2
+            curl -f http://localhost:8080/api/v1/health || { 
+              echo "Health check failed! Checking logs:"
+              tail -20 /root/backend-staging.log || true
+              exit 1
+            }
             
             echo "=== Deployment completed successfully ==="
