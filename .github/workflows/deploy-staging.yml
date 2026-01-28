@@ -45,8 +45,21 @@ jobs:
             set -x
             
             echo "=== Step 1: Stopping old backend process ==="
-            pkill -f "uvicorn.*app.main:app.*8080" 2>/dev/null || true
-            sleep 2
+            # Безопасная остановка: находим PID и убиваем только его
+            OLD_PID=$(pgrep -f "uvicorn.*app.main:app.*8080" || true)
+            if [ ! -z "$OLD_PID" ]; then
+              echo "Found old process with PID: $OLD_PID"
+              kill $OLD_PID 2>/dev/null || true
+              sleep 2
+              # Проверяем, что процесс действительно остановился
+              if ps -p $OLD_PID > /dev/null 2>&1; then
+                echo "Process still running, force killing..."
+                kill -9 $OLD_PID 2>/dev/null || true
+              fi
+            else
+              echo "No old process found"
+            fi
+            sleep 1
             
             echo "=== Step 2: Changing to backend directory ==="
             cd /root/matchacalc-backend || { echo "Directory not found!"; exit 1; }
