@@ -1,0 +1,80 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Login to Docker Hub (optional, если используешь registry)
+        # Раскомментируй, если хочешь пушить образ в registry
+        # uses: docker/login-action@v3
+        # with:
+        #   username: ${{ secrets.DOCKER_USERNAME }}
+        #   password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build Docker image
+        run: |
+          docker build -t matchacalc-staging:${{ github.sha }} .
+          docker tag matchacalc-staging:${{ github.sha }} matchacalc-staging:latest
+      
+      - name: Save Docker image
+        run: |
+          docker save matchacalc-staging:latest | gzip > matchacalc-staging.tar.gz
+      
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          source: "matchacalc-staging.tar.gz"
+          target: "/tmp/"
+      
+      - name: Load and run Docker container on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          script: |
+            # Останавливаем старый контейнер
+            docker stop matchacalc-staging || true
+            docker rm matchacalc-staging || true
+            
+            # Загружаем новый образ
+            docker load < /tmp/matchacalc-staging.tar.gz
+            
+            # Запускаем новый контейнер на порту 8080
+            docker run -d \
+              --name matchacalc-staging \
+              --restart unless-stopped \
+              --add-host=host.docker.internal:host-gateway \
+              -p 8080:8000 \
+              -e DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}" \
+              -e REDIS_URL="${{ secrets.STAGING_REDIS_URL }}" \
+              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              -e JWT_ALGORITHM=HS256 \
+              -e ACCESS_TOKEN_EXPIRE_MINUTES=129600 \
+              -e RATE_LIMIT_GUEST=180 \
+              -e RATE_LIMIT_USER=60 \
+              -e RATE_LIMIT_SUBSCRIBER=10 \
+              matchacalc-staging:latest
+            
+            # Очищаем временные файлы
+            rm -f /tmp/matchacalc-staging.tar.gz
+            
+            # Очищаем старые образы
+            docker image prune -f

@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
 from app.auth.routes import router as auth_router
 from app.calc.routes import router as calc_router
 from app.reports.routes import router as reports_router
@@ -44,3 +47,32 @@ def health_check():
 @app.get("/api/v1/health")
 def health_check_v1():
     return {"status": "ok"}
+
+
+# Раздача статических файлов фронтенда (должно быть в конце, после всех API роутов)
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    # Раздача CSS, JS и других статических файлов
+    app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
+    app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
+    
+    # Catch-all для HTML файлов (SPA routing)
+    @app.get("/{path:path}")
+    async def serve_frontend(path: str):
+        """Раздача фронтенда для всех путей, кроме API"""
+        # Если путь начинается с api/, не обрабатываем (должен вернуть 404 от FastAPI)
+        if path.startswith("api/"):
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404)
+        
+        file_path = static_dir / path
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        
+        # Для всех остальных путей отдаём index.html (SPA)
+        index_path = static_dir / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+        
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404)
