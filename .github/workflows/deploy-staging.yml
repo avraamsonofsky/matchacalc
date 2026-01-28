@@ -13,29 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      
-      - name: Build Docker image
-        run: |
-          docker build -t matchacalc-staging:${{ github.sha }} .
-          docker tag matchacalc-staging:${{ github.sha }} matchacalc-staging:latest
-      
-      - name: Save Docker image
-        run: |
-          docker save matchacalc-staging:latest | gzip > matchacalc-staging.tar.gz
-      
-      - name: Deploy to VPS
+      - name: Deploy backend code to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          source: "matchacalc-staging.tar.gz"
-          target: "/tmp/"
+          source: "matchacalc-backend/"
+          target: "/root/matchacalc-backend/"
       
-      - name: Load and run Docker container on VPS
+      - name: Deploy frontend code to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          source: "matchacalc-frontend/"
+          target: "/var/www/lattecalc/"
+      
+      - name: Setup and restart backend on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -44,40 +42,43 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           script: |
             set -e
-            echo "=== Checking Docker ==="
-            docker --version || (echo "Docker not found!" && exit 1)
+            echo "=== Stopping old backend process ==="
+            pkill -f "uvicorn.*matchacalc.*staging" || pkill -f "uvicorn.*app.main:app.*8080" || true
+            sleep 2
             
-            echo "=== Checking uploaded file ==="
-            ls -lh /tmp/matchacalc-staging.tar.gz || (echo "File not found!" && exit 1)
+            echo "=== Setting up backend directory ==="
+            cd /root/matchacalc-backend
             
-            echo "=== Stopping old container ==="
-            docker stop matchacalc-staging || true
-            docker rm matchacalc-staging || true
+            echo "=== Creating virtual environment if needed ==="
+            if [ ! -d ".venv" ]; then
+              python3 -m venv .venv
+            fi
             
-            echo "=== Loading Docker image ==="
-            docker load < /tmp/matchacalc-staging.tar.gz || (echo "Failed to load image!" && exit 1)
+            echo "=== Activating virtual environment and installing dependencies ==="
+            source .venv/bin/activate
+            pip install --upgrade pip
+            pip install -r requirements.txt
             
-            echo "=== Starting new container ==="
-            docker run -d \
-              --name matchacalc-staging \
-              --restart unless-stopped \
-              --add-host=host.docker.internal:host-gateway \
-              -p 8080:8000 \
-              -e DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}" \
-              -e REDIS_URL="${{ secrets.STAGING_REDIS_URL }}" \
-              -e JWT_SECRET="${{ secrets.JWT_SECRET }}" \
-              -e JWT_ALGORITHM=HS256 \
-              -e ACCESS_TOKEN_EXPIRE_MINUTES=129600 \
-              -e RATE_LIMIT_GUEST=180 \
-              -e RATE_LIMIT_USER=60 \
-              -e RATE_LIMIT_SUBSCRIBER=10 \
-              matchacalc-staging:latest || (echo "Failed to start container!" && exit 1)
+            echo "=== Setting environment variables ==="
+            export DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}"
+            export REDIS_URL="${{ secrets.STAGING_REDIS_URL }}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export JWT_ALGORITHM=HS256
+            export ACCESS_TOKEN_EXPIRE_MINUTES=129600
+            export RATE_LIMIT_GUEST=180
+            export RATE_LIMIT_USER=60
+            export RATE_LIMIT_SUBSCRIBER=10
             
-            echo "=== Checking container status ==="
-            docker ps | grep matchacalc-staging || (echo "Container not running!" && exit 1)
+            echo "=== Starting backend on port 8080 ==="
+            nohup .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8080 > /root/backend-staging.log 2>&1 &
             
-            echo "=== Cleaning up ==="
-            rm -f /tmp/matchacalc-staging.tar.gz
-            docker image prune -f
+            echo "=== Waiting for backend to start ==="
+            sleep 5
+            
+            echo "=== Checking if backend is running ==="
+            ps aux | grep "[u]vicorn.*8080" || (echo "Backend not running!" && exit 1)
+            
+            echo "=== Testing backend health ==="
+            curl -f http://localhost:8080/api/v1/health || (echo "Health check failed!" && exit 1)
             
             echo "=== Deployment completed successfully ==="
