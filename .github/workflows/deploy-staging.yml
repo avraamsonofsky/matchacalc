@@ -43,14 +43,21 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           script: |
-            # Останавливаем старый контейнер
+            set -e
+            echo "=== Checking Docker ==="
+            docker --version || (echo "Docker not found!" && exit 1)
+            
+            echo "=== Checking uploaded file ==="
+            ls -lh /tmp/matchacalc-staging.tar.gz || (echo "File not found!" && exit 1)
+            
+            echo "=== Stopping old container ==="
             docker stop matchacalc-staging || true
             docker rm matchacalc-staging || true
             
-            # Загружаем новый образ
-            docker load < /tmp/matchacalc-staging.tar.gz
+            echo "=== Loading Docker image ==="
+            docker load < /tmp/matchacalc-staging.tar.gz || (echo "Failed to load image!" && exit 1)
             
-            # Запускаем новый контейнер на порту 8080
+            echo "=== Starting new container ==="
             docker run -d \
               --name matchacalc-staging \
               --restart unless-stopped \
@@ -64,10 +71,13 @@ jobs:
               -e RATE_LIMIT_GUEST=180 \
               -e RATE_LIMIT_USER=60 \
               -e RATE_LIMIT_SUBSCRIBER=10 \
-              matchacalc-staging:latest
+              matchacalc-staging:latest || (echo "Failed to start container!" && exit 1)
             
-            # Очищаем временные файлы
+            echo "=== Checking container status ==="
+            docker ps | grep matchacalc-staging || (echo "Container not running!" && exit 1)
+            
+            echo "=== Cleaning up ==="
             rm -f /tmp/matchacalc-staging.tar.gz
-            
-            # Очищаем старые образы
             docker image prune -f
+            
+            echo "=== Deployment completed successfully ==="
