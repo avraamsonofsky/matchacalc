@@ -29,6 +29,9 @@ class LocationGroupResponse(BaseModel):
 class ScenarioResponse(BaseModel):
     id: str
     name: str
-    
+    rent_growth_multiplier: float
+    price_growth_multiplier: float
+    discount_rate_adjustment: Optional[float] = None
+
     class Config:
         from_attributes = True

@@ -152,6 +152,9 @@
             border-radius: 6px;
             cursor: pointer;
         }
+        .values-cell { min-width: 220px; }
+        .values-cell input { width: 42px; padding: 0.2rem; margin: 0 1px; font-size: 0.85rem; }
+        .values-cell .save-cell-btn { margin-top: 4px; font-size: 0.8rem; padding: 0.2rem 0.5rem; }
     </style>
 </head>
 <body>
@@ -181,13 +184,6 @@
 
         <!-- Reports Tab -->
         <div id="tab-reports" class="tab-content">
-            <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
-                <select id="report-selector" onchange="loadReportValues(this.value)">
-                    <option value="">Выберите отчёт для просмотра деталей...</option>
-                </select>
-                <button class="btn-primary" onclick="createNewReport()">+ Новый отчёт</button>
-            </div>
-            
             <table class="data-table" id="reports-table">
                 <thead>
                     <tr>
@@ -196,7 +192,7 @@
                         <th>Название</th>
                         <th>Период</th>
                         <th>Статус</th>
-                        <th>Действия</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -205,27 +201,15 @@
             </table>
         </div>
 
-        <!-- Values Tab -->
+        <!-- Values Tab: столбцы = отчёты, сверху название (редактируется), строки = район/класс -->
         <div id="tab-values" class="tab-content hidden">
-            <div style="margin-bottom: 1rem;">
-                <p>Редактирование значений для отчёта: <strong id="current-report-name">-</strong></p>
-            </div>
             <div style="overflow-x: auto;">
-                <table class="data-table" id="values-table">
-                    <thead>
-                        <tr>
-                            <th>Район (ID)</th>
-                            <th>Класс</th>
-                            <th>Аренда (₽/м²)</th>
-                            <th>Рост Аренды (%)</th>
-                            <th>Цена (₽/м²)</th>
-                            <th>Рост Цены (%)</th>
-                            <th>Вакансия (%)</th>
-                            <th>Действия</th>
-                        </tr>
+                <table class="data-table" id="values-matrix-table">
+                    <thead id="values-matrix-thead">
+                        <tr><th>Район / Класс</th><!-- Колонки отчётов подставляются JS --></tr>
                     </thead>
-                    <tbody>
-                        <!-- Populated by JS -->
+                    <tbody id="values-matrix-tbody">
+                        <!-- Строки подставляются JS -->
                     </tbody>
                 </table>
             </div>
@@ -241,30 +225,13 @@
                         <th>Рост Аренды (k)</th>
                         <th>Рост Цены (k)</th>
                         <th>Корр. Ставки</th>
-                        <th>Действия</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Populated by JS -->
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <!-- Модальное окно: новый отчёт -->
-    <div id="modal-new-report" class="admin-modal hidden">
-        <div class="admin-modal-content">
-            <h3>Новый отчёт</h3>
-            <form id="form-new-report">
-                <label>Провайдер <input type="text" id="new-report-provider" required placeholder="Например: Nikoliers"></label>
-                <label>Название <input type="text" id="new-report-title" required placeholder="Например: Офисная недвижимость"></label>
-                <label>Период <input type="text" id="new-report-period" required placeholder="Например: Q4 2025"></label>
-                <label><input type="checkbox" id="new-report-active" checked> Активен</label>
-                <div class="admin-modal-actions">
-                    <button type="submit" class="btn-primary">Создать</button>
-                    <button type="button" class="btn-secondary" onclick="Admin.closeNewReportModal()">Отмена</button>
-                </div>
-            </form>
         </div>
     </div>
 
