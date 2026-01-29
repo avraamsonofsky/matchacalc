@@ -363,8 +363,14 @@ const Calculator = {
             updateValue('irr', Utils.formatPercent(data.dynamic_metrics.irr_percent));
         }
         
-        // Прокрутка к результатам
-        resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // Прокрутка к результатам (на мобильных скроллим к началу блока)
+        const isMobile = window.innerWidth <= 768;
+        const resultsContainer = document.getElementById('results-panel');
+        if (isMobile && resultsContainer) {
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     },
     
     // Сброс результатов к placeholder

@@ -61,6 +61,11 @@ p, span, a, button, input, select, textarea, label {
     line-height: var(--line-height-h4);
 }
 
+/* Бургер-меню скрыто на десктопе */
+.mobile-menu-btn {
+    display: none;
+}
+
 .nav-menu {
     display: flex;
     align-items: center;

@@ -24,7 +24,12 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <a href="index.html" class="logo">ЛаттеCalc</a>
-            <ul class="nav-menu">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
                 <li><a href="login.html" id="nav-login">Вход</a></li>
                 <li><a href="register.html" id="nav-register">Регистрация</a></li>
                 <li><a href="subscription.html">Подписка</a></li>
@@ -431,6 +436,25 @@
                     }
                 }
             }, 300);
+            
+            // Инициализация мобильного меню
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const navMenuEl = document.getElementById('nav-menu');
+            
+            if (mobileMenuBtn && navMenuEl) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenuBtn.classList.toggle('active');
+                    navMenuEl.classList.toggle('mobile-open');
+                });
+                
+                // Закрываем меню при клике на ссылку
+                navMenuEl.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenuBtn.classList.remove('active');
+                        navMenuEl.classList.remove('mobile-open');
+                    });
+                });
+            }
         });
     </script>
 </body>
