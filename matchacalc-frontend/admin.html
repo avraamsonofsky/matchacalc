@@ -110,6 +110,48 @@
             border-radius: 8px;
             display: none;
         }
+        .admin-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .admin-modal.hidden { display: none; }
+        .admin-modal-content {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            min-width: 320px;
+        }
+        .admin-modal-content h3 { margin-top: 0; margin-bottom: 1rem; }
+        .admin-modal-content label {
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+        .admin-modal-content input[type="text"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            margin-top: 0.25rem;
+        }
+        .admin-modal-actions {
+            margin-top: 1.25rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn-secondary {
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -206,6 +248,23 @@
                     <!-- Populated by JS -->
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Модальное окно: новый отчёт -->
+    <div id="modal-new-report" class="admin-modal hidden">
+        <div class="admin-modal-content">
+            <h3>Новый отчёт</h3>
+            <form id="form-new-report">
+                <label>Провайдер <input type="text" id="new-report-provider" required placeholder="Например: Nikoliers"></label>
+                <label>Название <input type="text" id="new-report-title" required placeholder="Например: Офисная недвижимость"></label>
+                <label>Период <input type="text" id="new-report-period" required placeholder="Например: Q4 2025"></label>
+                <label><input type="checkbox" id="new-report-active" checked> Активен</label>
+                <div class="admin-modal-actions">
+                    <button type="submit" class="btn-primary">Создать</button>
+                    <button type="button" class="btn-secondary" onclick="Admin.closeNewReportModal()">Отмена</button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -51,7 +51,14 @@ const API = {
             body: JSON.stringify(data)
         });
     },
-    
+
+    async put(endpoint, data) {
+        return this.request(endpoint, {
+            method: 'PUT',
+            body: data ? JSON.stringify(data) : undefined
+        });
+    },
+
     // Получить список районов
     async getLocationGroups() {
         return this.get('/reports/location-groups');

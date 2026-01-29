@@ -13,13 +13,50 @@ const Admin = {
             Auth.logout();
         });
 
+        // Форма создания отчёта
+        document.getElementById('form-new-report').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.submitNewReport();
+        });
+
         await this.loadReports();
         await this.loadScenarios();
     },
 
+    openNewReportModal() {
+        document.getElementById('modal-new-report').classList.remove('hidden');
+        document.getElementById('new-report-provider').value = '';
+        document.getElementById('new-report-title').value = '';
+        document.getElementById('new-report-period').value = '';
+        document.getElementById('new-report-active').checked = true;
+    },
+
+    closeNewReportModal() {
+        document.getElementById('modal-new-report').classList.add('hidden');
+    },
+
+    async submitNewReport() {
+        const provider = document.getElementById('new-report-provider').value.trim();
+        const title = document.getElementById('new-report-title').value.trim();
+        const period = document.getElementById('new-report-period').value.trim();
+        const active = document.getElementById('new-report-active').checked;
+        if (!provider || !title || !period) {
+            this.showError('Заполните провайдера, название и период');
+            return;
+        }
+        try {
+            await API.post('/admin/reports', { provider, title, period, active });
+            this.showStatus('Отчёт создан');
+            this.closeNewReportModal();
+            await this.loadReports();
+        } catch (error) {
+            this.showError('Ошибка создания отчёта: ' + error.message);
+        }
+    },
+
     async loadReports() {
         try {
-            const reports = await api.get('/admin/reports');
+            const reports = await API.get('/admin/reports');
             this.renderReports(reports);
             this.populateReportSelector(reports);
         } catch (error) {
@@ -65,7 +102,7 @@ const Admin = {
 
     async updateReport(id, field, value) {
         try {
-            await api.put(`/admin/reports/${id}`, { [field]: value });
+            await API.put(`/admin/reports/${id}`, { [field]: value });
             this.showStatus('Отчёт обновлен');
         } catch (error) {
             this.showError('Ошибка обновления: ' + error.message);
@@ -84,7 +121,7 @@ const Admin = {
         switchTab('values');
 
         try {
-            const values = await api.get(`/admin/reports/${reportId}/values`);
+            const values = await API.get(`/admin/reports/${reportId}/values`);
             this.renderValues(values);
         } catch (error) {
             this.showError('Не удалось загрузить значения: ' + error.message);
@@ -115,7 +152,7 @@ const Admin = {
         try {
             // Convert empty string to null for optional fields
             const payload = { [field]: value === '' ? null : Number(value) };
-            await api.put(`/admin/report-values/${id}`, payload);
+            await API.put(`/admin/report-values/${id}`, payload);
             this.showStatus('Значение сохранено');
         } catch (error) {
             this.showError('Ошибка сохранения: ' + error.message);
@@ -124,7 +161,7 @@ const Admin = {
 
     async loadScenarios() {
         try {
-            const scenarios = await api.get('/reports/scenarios'); // Public endpoint is fine for reading
+            const scenarios = await API.get('/reports/scenarios'); // Public endpoint is fine for reading
             this.renderScenarios(scenarios);
         } catch (error) {
             this.showError('Не удалось загрузить сценарии: ' + error.message);
@@ -152,7 +189,7 @@ const Admin = {
     async updateScenario(id, field, value) {
         try {
             const payload = { [field]: field === 'name' ? value : Number(value) };
-            await api.put(`/admin/scenarios/${id}`, payload);
+            await API.put(`/admin/scenarios/${id}`, payload);
             this.showStatus('Сценарий обновлен');
         } catch (error) {
             this.showError('Ошибка обновления сценария: ' + error.message);
@@ -176,7 +213,7 @@ const Admin = {
 
 // Global helpers
 window.loadReportValues = (id) => Admin.loadValuesForReport(id);
-window.createNewReport = () => alert('Функционал создания пока не реализован в интерфейсе');
+window.createNewReport = () => Admin.openNewReportModal();
 
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));

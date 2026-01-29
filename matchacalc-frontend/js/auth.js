@@ -150,13 +150,17 @@ const Auth = {
         }
     },
     
+    logout: () => {
+        localStorage.removeItem('access_token');
+        window.location.reload();
+    },
+
     setupLogout: () => {
         const logoutLink = document.getElementById('nav-logout');
         if (logoutLink) {
             logoutLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                localStorage.removeItem('access_token');
-                window.location.reload();
+                Auth.logout();
             });
         }
     }
