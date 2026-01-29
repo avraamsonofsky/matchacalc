@@ -1,0 +1,26 @@
+# Конфиг Nginx для стагинга: staging.commercial-invest.ru
+# Скопируй на VPS в /etc/nginx/sites-available/staging.commercial-invest.ru
+
+server {
+    listen 80;
+    server_name staging.commercial-invest.ru;
+
+    # Фронт стагинга (если scp создал вложенную папку — используй второй вариант)
+    root /var/www/staging;
+    # root /var/www/staging/matchacalc-frontend;   # раскомментируй, если index.html лежит внутри matchacalc-frontend
+
+    index index.html;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API стагинг-бэкенда (порт 8080)
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
