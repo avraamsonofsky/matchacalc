@@ -191,7 +191,8 @@ function switchTab(tabName) {
     if (tabName === 'scenarios') buttons[2].classList.add('active');
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
+// Init: сначала восстанавливаем сессию из токена, потом проверяем роль
+document.addEventListener('DOMContentLoaded', async () => {
+    await Auth.init();
     Admin.init();
 });
