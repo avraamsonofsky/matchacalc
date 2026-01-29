@@ -445,9 +445,22 @@
             const navMenuEl = document.getElementById('nav-menu');
             
             if (mobileMenuBtn && navMenuEl) {
-                mobileMenuBtn.addEventListener('click', () => {
+                // Убираем inline стили, которые могли быть установлены для десктопа
+                if (window.innerWidth <= 768) {
+                    navMenuEl.style.display = '';
+                }
+                
+                mobileMenuBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     mobileMenuBtn.classList.toggle('active');
                     navMenuEl.classList.toggle('mobile-open');
+                    // Убедимся что inline стили не мешают
+                    if (navMenuEl.classList.contains('mobile-open')) {
+                        navMenuEl.style.display = 'flex';
+                    } else {
+                        navMenuEl.style.display = '';
+                    }
                 });
                 
                 // Закрываем меню при клике на ссылку
@@ -455,6 +468,7 @@
                     link.addEventListener('click', () => {
                         mobileMenuBtn.classList.remove('active');
                         navMenuEl.classList.remove('mobile-open');
+                        navMenuEl.style.display = '';
                     });
                 });
             }

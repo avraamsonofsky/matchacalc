@@ -131,8 +131,8 @@
     }
     
     .hero-text-modern {
-        text-align: center;
-        align-items: center;
+        text-align: left;
+        align-items: flex-start;
     }
     
     .latte-brand {
@@ -142,27 +142,27 @@
     .calc-overlay {
         font-size: 14px;
         bottom: -2px;
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
+        transform: none;
     }
     
     .brand-stack {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
     }
     
     .hero-headline-modern {
-        align-items: center;
+        align-items: flex-start;
     }
     
     .line-1, .line-2 {
-        font-size: 28px;
-        text-align: center;
+        font-size: 26px;
+        text-align: left;
     }
     
     .hero-description-modern {
-        text-align: center;
+        text-align: left;
         font-size: var(--font-size-small);
         max-width: 100%;
     }
@@ -341,44 +341,40 @@
     }
     
     .comparison-table-header {
-        display: none; /* Скрываем заголовок на мобильных */
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        padding: var(--spacing-sm);
+        font-size: 12px;
     }
     
-    .comparison-row {
-        display: flex;
-        flex-direction: column;
-        padding: var(--spacing-md);
-        gap: var(--spacing-sm);
+    .comparison-table-header .column-header {
+        text-align: center;
+        font-size: 11px;
     }
     
-    .benefit-name {
-        font-size: var(--font-size-body);
-        font-weight: var(--font-weight-medium);
-        margin-bottom: var(--spacing-xs);
-    }
-    
-    .comparison-value {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-xs);
+    .comparison-table-header .benefits-col {
         text-align: left;
     }
     
-    .comparison-value::before {
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
+    .comparison-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        padding: var(--spacing-sm);
+        gap: var(--spacing-xs);
+        align-items: center;
     }
     
-    .comparison-row .comparison-value:first-of-type::before {
-        content: "ЛаттеCalc: ";
+    .benefit-name {
+        font-size: 13px;
+        font-weight: var(--font-weight-normal);
     }
     
-    .comparison-row .comparison-value:last-of-type::before {
-        content: "Обычный: ";
+    .comparison-value {
+        text-align: center;
     }
     
     .check-icon, .cross-icon {
-        font-size: 18px;
+        font-size: 16px;
     }
     
     /* Футер */
@@ -401,19 +397,37 @@
     
     .calc-overlay {
         font-size: 12px;
+        left: 0;
+        transform: none;
     }
     
     .line-1, .line-2 {
-        font-size: 24px;
+        font-size: 22px;
+        text-align: left;
     }
     
     .hero-description-modern {
         font-size: 14px;
+        text-align: left;
     }
     
     .form-group-compact input,
     .form-group-compact select {
         padding: 10px 12px;
+    }
+    
+    /* Таблица преимуществ на маленьких экранах */
+    .comparison-table-header {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        font-size: 10px;
+    }
+    
+    .comparison-row {
+        grid-template-columns: 1.5fr 1fr 1fr;
+    }
+    
+    .benefit-name {
+        font-size: 12px;
     }
     
     .benefits-header h2 {
