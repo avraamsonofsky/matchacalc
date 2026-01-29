@@ -406,7 +406,7 @@
                 if (cianWrapper) cianWrapper.classList.add('disabled');
             }
             
-            // Финальная проверка - убеждаемся, что навбар и элементы меню видимы
+            // Финальная проверка - убеждаемся, что навбар видим
             setTimeout(() => {
                 if (navbar && window.scrollY < 100) {
                     navbar.classList.remove('hidden');
@@ -415,24 +415,27 @@
                     navbar.style.transform = 'translateY(0)';
                 }
                 
-                // КРИТИЧНО: Гарантируем, что nav-menu всегда видим
+                // На десктопе гарантируем, что nav-menu видим (на мобильных скрыт по умолчанию)
                 const navMenuCheck = document.querySelector('.nav-menu');
-                if (navMenuCheck) {
+                const isMobile = window.innerWidth <= 768;
+                if (navMenuCheck && !isMobile) {
                     navMenuCheck.classList.remove('hidden');
                     navMenuCheck.style.display = 'flex';
                 }
                 
-                // Дополнительная проверка элементов меню
-                if (navLogin && navLogin.parentElement) {
-                    const parent = navLogin.parentElement;
-                    if (!parent.classList.contains('hidden') || Auth.user === null) {
-                        parent.style.display = 'list-item';
+                // Дополнительная проверка элементов меню (только на десктопе)
+                if (!isMobile) {
+                    if (navLogin && navLogin.parentElement) {
+                        const parent = navLogin.parentElement;
+                        if (!parent.classList.contains('hidden') || Auth.user === null) {
+                            parent.style.display = 'list-item';
+                        }
                     }
-                }
-                if (navRegister && navRegister.parentElement) {
-                    const parent = navRegister.parentElement;
-                    if (!parent.classList.contains('hidden') || Auth.user === null) {
-                        parent.style.display = 'list-item';
+                    if (navRegister && navRegister.parentElement) {
+                        const parent = navRegister.parentElement;
+                        if (!parent.classList.contains('hidden') || Auth.user === null) {
+                            parent.style.display = 'list-item';
+                        }
                     }
                 }
             }, 300);

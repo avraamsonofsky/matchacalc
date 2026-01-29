@@ -110,9 +110,7 @@
         grid-template-columns: 1fr;
     }
     
-    .results-panel-modern {
-        order: -1; /* Результаты сверху на мобильных */
-    }
+    /* Порядок на мобильных контролируется в responsive.css */
     
     .metric-value {
         font-size: var(--font-size-h4);

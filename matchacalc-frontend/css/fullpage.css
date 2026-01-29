@@ -455,8 +455,13 @@ body {
         gap: var(--spacing-md);
     }
     
+    /* На мобильных: сначала форма (order: 1), потом результаты (order: 2) */
+    .calculator-card-compact {
+        order: 1;
+    }
+    
     .results-panel-compact {
-        order: -1;
+        order: 2;
     }
     
     .form-row {
