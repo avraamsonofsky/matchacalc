@@ -141,7 +141,7 @@
                                 
                                 <div class="metric-row">
                                     <span class="metric-label">NPV</span>
-                                    <span class="metric-value placeholder" id="npv">18 420 000 ₽</span>
+                                    <span class="metric-value placeholder" id="npv">— (укажите WACC)</span>
                                 </div>
                                 
                                 <div class="metric-row">
@@ -247,6 +247,11 @@
                                     <option value="">Отчёт...</option>
                                 </select>
                             </div>
+                        </div>
+
+                        <div class="form-group-compact">
+                            <label for="wacc">WACC, % <span style="font-weight: 400; opacity: 0.7; font-size: 0.85em;">(необязательно, для NPV)</span></label>
+                            <input type="number" id="wacc" name="wacc" min="0" max="100" step="0.1" placeholder="Например, 12">
                         </div>
 
                         <button type="button" id="calculate-btn" class="btn-calculate-compact">

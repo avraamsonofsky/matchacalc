@@ -18,6 +18,9 @@ def calculate_preview(
     Rate-limiting применяется через middleware
     """
     try:
+        # WACC: если передан в процентах, конвертируем в долю; иначе None
+        discount_rate = (request.wacc / 100.0) if request.wacc is not None else None
+
         result = calculate_metrics(
             db=db,
             purchase_price=request.purchase_price,
@@ -26,7 +29,8 @@ def calculate_preview(
             report_id=request.report_id,
             scenario_id=request.scenario_id,
             holding_years=request.holding_years,
-            property_class=request.property_class or PropertyClass.A
+            property_class=request.property_class or PropertyClass.A,
+            discount_rate=discount_rate
         )
         return CalculationResponse(**result)
     except ValueError as e:

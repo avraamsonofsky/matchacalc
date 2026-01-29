@@ -13,6 +13,7 @@ class CalculationRequest(BaseModel):
     scenario_id: str = Field(..., description="ID сценария (pes, base, opt)")
     report_id: int = Field(..., description="ID отчёта")
     property_class: Optional[PropertyClass] = Field(PropertyClass.A, description="Класс недвижимости")
+    wacc: Optional[float] = Field(None, ge=0, le=100, description="WACC компании-покупателя в процентах (например, 12). Если не указан — NPV не рассчитывается.")
 
 
 class StaticMetrics(BaseModel):
@@ -29,7 +30,7 @@ class DynamicMetrics(BaseModel):
     sale_profit_percent: float
     total_profit: float
     total_profit_percent: float
-    npv: float
+    npv: Optional[float] = None  # Рублей. None, если WACC не указан
     irr_percent: float
 
 

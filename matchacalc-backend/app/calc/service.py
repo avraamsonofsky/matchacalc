@@ -36,7 +36,7 @@ def calculate_metrics(
     scenario_id: str,
     holding_years: int,
     property_class: PropertyClass = PropertyClass.A,
-    discount_rate: float = 0.12
+    discount_rate: Optional[float] = None  # None => NPV не считается
 ) -> dict:
     """
     Основная функция расчёта всех метрик
@@ -85,12 +85,15 @@ def calculate_metrics(
     sale_profit_percent = sale_profit / purchase_price if purchase_price > 0 else 0
     total_profit_percent = total_profit / purchase_price if purchase_price > 0 else 0
     
-    # NPV и IRR
-    npv = calculate_npv(
-        purchase_price, area, market_data.rent_start,
-        rent_growth_effective, price_growth_effective,
-        holding_years, discount_rate
-    )
+    # NPV: только если discount_rate (WACC) указан
+    if discount_rate is not None:
+        npv = calculate_npv(
+            purchase_price, area, market_data.rent_start,
+            rent_growth_effective, price_growth_effective,
+            holding_years, discount_rate
+        )
+    else:
+        npv = None
     
     irr = calculate_irr(
         purchase_price, area, market_data.rent_start,

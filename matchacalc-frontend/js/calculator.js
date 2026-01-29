@@ -262,6 +262,10 @@ const Calculator = {
             }
         }
         
+        // WACC (необязательно)
+        const waccInput = document.getElementById('wacc');
+        const waccValue = waccInput ? parseFloat(waccInput.value) : NaN;
+
         const data = {
             purchase_price: purchasePrice,
             area: area,
@@ -270,6 +274,11 @@ const Calculator = {
             scenario_id: scenarioId,
             report_id: reportId
         };
+
+        // Добавляем WACC, если введён
+        if (!isNaN(waccValue) && waccValue >= 0) {
+            data.wacc = waccValue;
+        }
         
         // Добавляем дату только если она указана
         if (rveDate) {
@@ -345,8 +354,12 @@ const Calculator = {
             updateValue('total-profit', Utils.formatCurrency(data.dynamic_metrics.total_profit));
             updateValue('total-profit-percent', `(${Utils.formatPercent(data.dynamic_metrics.total_profit_percent)})`);
             
-            // NPV и IRR (irr_percent уже доля)
-            updateValue('npv', Utils.formatCurrency(data.dynamic_metrics.npv));
+            // NPV (показываем "—" если не рассчитан из-за отсутствия WACC) и IRR
+            if (data.dynamic_metrics.npv != null) {
+                updateValue('npv', Utils.formatCurrency(data.dynamic_metrics.npv));
+            } else {
+                updateValue('npv', '— (укажите WACC)');
+            }
             updateValue('irr', Utils.formatPercent(data.dynamic_metrics.irr_percent));
         }
         
@@ -366,7 +379,7 @@ const Calculator = {
             'sale-profit-percent': '(85%)',
             'total-profit': '70 850 000 ₽',
             'total-profit-percent': '(141.7%)',
-            'npv': '18 420 000 ₽',
+            'npv': '— (укажите WACC)',
             'irr': '15.3%'
         };
         
