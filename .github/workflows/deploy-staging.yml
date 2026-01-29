@@ -72,7 +72,12 @@ jobs:
             
             echo "=== Step 2: Changing to staging backend directory ==="
             cd /root/matchacalc-backend-staging || { echo "Directory not found!"; exit 1; }
+            # scp-action creates nested folder: target/matchacalc-backend/
+            if [ -f matchacalc-backend/requirements.txt ]; then
+              cd matchacalc-backend
+            fi
             pwd
+            ls -la
             
             echo "=== Step 3: Creating virtual environment if needed ==="
             if [ ! -d ".venv" ]; then
