@@ -131,3 +131,19 @@ jobs:
             }
             
             echo "=== Deployment completed successfully ==="
+      
+      - name: Run create_staging_users.py (idempotent)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd /root/matchacalc-backend-staging
+            [ -d matchacalc-backend ] && cd matchacalc-backend
+            if [ -f scripts/create_staging_users.py ]; then
+              export DATABASE_URL="${{ secrets.STAGING_DATABASE_URL }}"
+              .venv/bin/python scripts/create_staging_users.py || true
+            fi
