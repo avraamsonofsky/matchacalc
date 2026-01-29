@@ -1,7 +1,28 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from app.db.models import PropertyClass
+
+
+class MarketReportValueInJson(BaseModel):
+    """Значение отчёта в JSON-загрузке"""
+    location_group_id: str
+    property_class: str  # "A_Prime", "A", "B_plus", "B"
+    rent_start: float
+    rent_growth_annual: float
+    price_per_m2_start: Optional[float] = None
+    price_growth_annual: float
+    vacancy_rate: Optional[float] = None
+
+
+class MarketReportInJson(BaseModel):
+    """Отчёт в JSON-загрузке"""
+    provider: str
+    title: str
+    period: str
+    file_url: Optional[str] = None
+    active: bool = True
+    values: List[MarketReportValueInJson] = []
 
 
 class MarketReportCreate(BaseModel):

@@ -164,3 +164,94 @@ def update_scenario(
     db.commit()
     db.refresh(scenario)
     return scenario
+
+
+# JSON Upload
+from app.admin.schemas import MarketReportInJson
+
+@router.post("/upload-json", status_code=status.HTTP_200_OK)
+def upload_market_data_json(
+    reports: List[MarketReportInJson],
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    """
+    Загрузка данных рынка из JSON.
+    Формат: массив отчётов, каждый с массивом values.
+    Если отчёт (provider + period) уже существует — обновляет значения.
+    """
+    created_reports = 0
+    updated_reports = 0
+    created_values = 0
+    updated_values = 0
+
+    for report_data in reports:
+        # Ищем существующий отчёт
+        existing_report = db.query(MarketReport).filter(
+            MarketReport.provider == report_data.provider,
+            MarketReport.period == report_data.period
+        ).first()
+
+        if existing_report:
+            report = existing_report
+            # Обновляем поля отчёта
+            report.title = report_data.title
+            report.file_url = report_data.file_url
+            report.active = report_data.active
+            updated_reports += 1
+        else:
+            report = MarketReport(
+                provider=report_data.provider,
+                title=report_data.title,
+                period=report_data.period,
+                file_url=report_data.file_url,
+                active=report_data.active
+            )
+            db.add(report)
+            db.commit()
+            db.refresh(report)
+            created_reports += 1
+
+        # Обрабатываем values
+        for val in report_data.values:
+            try:
+                prop_class = PropertyClass(val.property_class)
+            except ValueError:
+                continue  # Пропускаем некорректный класс
+
+            existing_value = db.query(MarketReportValue).filter(
+                MarketReportValue.report_id == report.id,
+                MarketReportValue.location_group_id == val.location_group_id,
+                MarketReportValue.property_class == prop_class
+            ).first()
+
+            if existing_value:
+                existing_value.rent_start = val.rent_start
+                existing_value.rent_growth_annual = val.rent_growth_annual
+                existing_value.price_per_m2_start = val.price_per_m2_start
+                existing_value.price_growth_annual = val.price_growth_annual
+                existing_value.vacancy_rate = val.vacancy_rate
+                updated_values += 1
+            else:
+                new_value = MarketReportValue(
+                    report_id=report.id,
+                    location_group_id=val.location_group_id,
+                    property_class=prop_class,
+                    rent_start=val.rent_start,
+                    rent_growth_annual=val.rent_growth_annual,
+                    price_per_m2_start=val.price_per_m2_start,
+                    price_growth_annual=val.price_growth_annual,
+                    vacancy_rate=val.vacancy_rate
+                )
+                db.add(new_value)
+                created_values += 1
+
+        db.commit()
+
+    return {
+        "message": "Данные загружены",
+        "created_reports": created_reports,
+        "updated_reports": updated_reports,
+        "created_values": created_values,
+        "updated_values": updated_values
+    }

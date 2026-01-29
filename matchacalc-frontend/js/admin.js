@@ -228,6 +228,39 @@ const Admin = {
         }
     },
 
+    async uploadJson() {
+        const textarea = document.getElementById('json-upload-textarea');
+        const resultEl = document.getElementById('upload-result');
+        const jsonText = textarea.value.trim();
+        if (!jsonText) {
+            this.showError('Вставьте JSON в текстовое поле');
+            return;
+        }
+        let data;
+        try {
+            data = JSON.parse(jsonText);
+        } catch (e) {
+            this.showError('Некорректный JSON: ' + e.message);
+            return;
+        }
+        if (!Array.isArray(data)) {
+            this.showError('JSON должен быть массивом отчётов');
+            return;
+        }
+        try {
+            resultEl.textContent = 'Загрузка...';
+            const response = await API.post('/admin/upload-json', data);
+            resultEl.textContent = `✓ Создано отчётов: ${response.created_reports}, обновлено: ${response.updated_reports}. Значений создано: ${response.created_values}, обновлено: ${response.updated_values}`;
+            resultEl.style.color = 'green';
+            // Обновляем данные в админке
+            await this.loadReports();
+            await this.loadValuesMatrix();
+        } catch (error) {
+            this.showError('Ошибка загрузки: ' + error.message);
+            resultEl.textContent = '';
+        }
+    },
+
     showError(msg) {
         const el = document.getElementById('error-message');
         el.textContent = msg;
@@ -245,12 +278,14 @@ const Admin = {
 
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+    const tabEl = document.getElementById(`tab-${tabName}`);
+    if (tabEl) tabEl.classList.remove('hidden');
     document.querySelectorAll('.admin-nav button').forEach(el => el.classList.remove('active'));
     const buttons = document.querySelectorAll('.admin-nav button');
     if (tabName === 'reports') buttons[0].classList.add('active');
     if (tabName === 'values') buttons[1].classList.add('active');
     if (tabName === 'scenarios') buttons[2].classList.add('active');
+    if (tabName === 'upload') buttons[3].classList.add('active');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

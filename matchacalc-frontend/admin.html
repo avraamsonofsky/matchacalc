@@ -152,9 +152,12 @@
             border-radius: 6px;
             cursor: pointer;
         }
-        .values-cell { min-width: 220px; }
-        .values-cell input { width: 42px; padding: 0.2rem; margin: 0 1px; font-size: 0.85rem; }
-        .values-cell .save-cell-btn { margin-top: 4px; font-size: 0.8rem; padding: 0.2rem 0.5rem; }
+        .values-cell { min-width: 280px; padding: 0.75rem; }
+        .values-cell input { width: 70px; padding: 0.35rem 0.5rem; margin: 2px 4px 2px 0; font-size: 0.9rem; border: 1px solid var(--color-border); border-radius: 4px; }
+        .values-cell input:focus { border-color: var(--color-accent); outline: none; }
+        .values-cell .save-cell-btn { margin-top: 6px; font-size: 0.85rem; padding: 0.3rem 0.75rem; }
+        .values-cell > div { margin-bottom: 4px; display: flex; align-items: center; }
+        .values-cell > div > span:first-child, .values-cell > div:before { min-width: 60px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -180,6 +183,7 @@
             <button class="active" onclick="switchTab('reports')">Отчёты</button>
             <button onclick="switchTab('values')">Коэффициенты (Values)</button>
             <button onclick="switchTab('scenarios')">Сценарии</button>
+            <button onclick="switchTab('upload')">Загрузить JSON</button>
         </div>
 
         <!-- Reports Tab -->
@@ -212,6 +216,39 @@
                         <!-- Строки подставляются JS -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- Upload JSON Tab -->
+        <div id="tab-upload" class="tab-content hidden">
+            <div style="max-width: 800px;">
+                <p style="margin-bottom: 1rem; color: var(--color-text-secondary);">
+                    Вставьте JSON с данными рынка. Формат: массив отчётов, каждый содержит <code>provider</code>, <code>title</code>, <code>period</code>, <code>active</code> и массив <code>values</code>.
+                    <br>Если отчёт с таким <code>provider</code> + <code>period</code> уже существует — значения обновятся.
+                </p>
+                <textarea id="json-upload-textarea" rows="15" style="width: 100%; font-family: monospace; font-size: 0.85rem; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 6px;" placeholder='[
+  {
+    "provider": "nikoliers",
+    "title": "Офисный рынок Q4 2025",
+    "period": "2025-Q4",
+    "active": true,
+    "values": [
+      {
+        "location_group_id": "moscow_city",
+        "property_class": "A",
+        "rent_start": 58000,
+        "rent_growth_annual": 0.12,
+        "price_per_m2_start": 420000,
+        "price_growth_annual": 0.035,
+        "vacancy_rate": 0.05
+      }
+    ]
+  }
+]'></textarea>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;">
+                    <button type="button" class="btn-primary" onclick="Admin.uploadJson()">Загрузить JSON</button>
+                    <span id="upload-result" style="color: var(--color-text-secondary);"></span>
+                </div>
             </div>
         </div>
 
