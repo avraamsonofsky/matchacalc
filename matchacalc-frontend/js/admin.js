@@ -17,6 +17,7 @@ const Admin = {
         await this.loadReports();
         await this.loadScenarios();
         await this.loadValuesMatrix();
+        await this.loadUsers();
     },
 
     async loadReports() {
@@ -261,6 +262,153 @@ const Admin = {
         }
     },
 
+    // User Management
+    async loadUsers() {
+        try {
+            const users = await API.get('/admin/users');
+            this.renderUsers(users);
+        } catch (error) {
+            this.showError('Не удалось загрузить пользователей: ' + error.message);
+        }
+    },
+
+    renderUsers(users) {
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = '';
+        const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-user-id', user.id);
+            
+            // Определяем текущую подписку
+            const activeSub = user.subscriptions.find(s => s.status === 'active');
+            const subPlan = activeSub ? activeSub.plan : 'none';
+            const subExpires = activeSub && activeSub.expires_at ? activeSub.expires_at.split('T')[0] : '';
+            
+            // Определяем тип для select
+            let userType = 'user';
+            if (user.role === 'admin') userType = 'admin';
+            else if (subPlan === 'developer' || subPlan === 'agent') userType = 'premium';
+            
+            const createdAt = new Date(user.created_at).toLocaleDateString('ru-RU');
+            
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${esc(user.email)}</td>
+                <td>
+                    <select data-field="type" onchange="Admin.toggleUserExpires(${user.id})">
+                        <option value="user" ${userType === 'user' ? 'selected' : ''}>Обычный</option>
+                        <option value="premium" ${userType === 'premium' ? 'selected' : ''}>Premium</option>
+                        <option value="admin" ${userType === 'admin' ? 'selected' : ''}>Админ</option>
+                    </select>
+                </td>
+                <td>${subPlan !== 'none' ? subPlan : '—'}</td>
+                <td>
+                    <input type="date" data-field="expires" value="${subExpires}" 
+                           style="width: 130px; ${userType !== 'premium' ? 'display:none;' : ''}">
+                    <span class="expires-dash" style="${userType === 'premium' ? 'display:none;' : ''}">${userType !== 'premium' ? '—' : ''}</span>
+                </td>
+                <td>${createdAt}</td>
+                <td>
+                    <button type="button" class="action-btn save-row-btn" onclick="Admin.saveUser(${user.id})">Сохранить</button>
+                    <button type="button" class="action-btn delete-btn" onclick="Admin.deleteUser(${user.id})" style="background:#dc3545; margin-left:4px;">Удалить</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    },
+
+    toggleExpiresField() {
+        const type = document.getElementById('new-user-type').value;
+        const wrapper = document.getElementById('new-user-expires-wrapper');
+        wrapper.style.display = type === 'premium' ? 'block' : 'none';
+    },
+
+    toggleUserExpires(userId) {
+        const tr = document.querySelector(`#users-tbody tr[data-user-id="${userId}"]`);
+        if (!tr) return;
+        const type = tr.querySelector('[data-field="type"]').value;
+        const expiresInput = tr.querySelector('[data-field="expires"]');
+        const expiresDash = tr.querySelector('.expires-dash');
+        if (type === 'premium') {
+            expiresInput.style.display = '';
+            expiresDash.style.display = 'none';
+        } else {
+            expiresInput.style.display = 'none';
+            expiresDash.style.display = '';
+            expiresDash.textContent = '—';
+        }
+    },
+
+    async createUser() {
+        const email = document.getElementById('new-user-email').value.trim();
+        const password = document.getElementById('new-user-password').value;
+        const type = document.getElementById('new-user-type').value;
+        const expiresInput = document.getElementById('new-user-expires').value;
+
+        if (!email || !password) {
+            this.showError('Укажите email и пароль');
+            return;
+        }
+
+        const payload = {
+            email,
+            password,
+            role: type === 'admin' ? 'admin' : 'user',
+            subscription_plan: type === 'premium' ? 'developer' : null,
+            subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
+        };
+
+        try {
+            await API.post('/admin/users', payload);
+            this.showStatus('Пользователь создан');
+            // Очищаем форму
+            document.getElementById('new-user-email').value = '';
+            document.getElementById('new-user-password').value = '';
+            document.getElementById('new-user-type').value = 'user';
+            document.getElementById('new-user-expires').value = '';
+            this.toggleExpiresField();
+            // Перезагружаем список
+            await this.loadUsers();
+        } catch (error) {
+            this.showError('Ошибка: ' + error.message);
+        }
+    },
+
+    async saveUser(userId) {
+        const tr = document.querySelector(`#users-tbody tr[data-user-id="${userId}"]`);
+        if (!tr) return;
+
+        const type = tr.querySelector('[data-field="type"]').value;
+        const expiresInput = tr.querySelector('[data-field="expires"]').value;
+
+        const payload = {
+            role: type === 'admin' ? 'admin' : 'user',
+            subscription_plan: type === 'premium' ? 'developer' : 'none',
+            subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
+        };
+
+        try {
+            await API.put(`/admin/users/${userId}`, payload);
+            this.showStatus('Пользователь обновлён');
+            await this.loadUsers();
+        } catch (error) {
+            this.showError('Ошибка: ' + error.message);
+        }
+    },
+
+    async deleteUser(userId) {
+        if (!confirm('Удалить пользователя? Это действие необратимо.')) return;
+        try {
+            await API.delete(`/admin/users/${userId}`);
+            this.showStatus('Пользователь удалён');
+            await this.loadUsers();
+        } catch (error) {
+            this.showError('Ошибка: ' + error.message);
+        }
+    },
+
     showError(msg) {
         const el = document.getElementById('error-message');
         el.textContent = msg;
@@ -285,7 +433,8 @@ function switchTab(tabName) {
     if (tabName === 'reports') buttons[0].classList.add('active');
     if (tabName === 'values') buttons[1].classList.add('active');
     if (tabName === 'scenarios') buttons[2].classList.add('active');
-    if (tabName === 'upload') buttons[3].classList.add('active');
+    if (tabName === 'users') buttons[3].classList.add('active');
+    if (tabName === 'upload') buttons[4].classList.add('active');
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -255,3 +255,135 @@ def upload_market_data_json(
         "created_values": created_values,
         "updated_values": updated_values
     }
+
+
+# User Management
+from app.db.models import User, Subscription, SubscriptionPlan, SubscriptionStatus
+from app.admin.schemas import UserResponse, UserCreate, UserUpdate
+from app.auth.service import get_password_hash
+
+
+@router.get("/users", response_model=List[UserResponse])
+def get_all_users(
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    """Получить список всех пользователей с подписками"""
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    return users
+
+
+@router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def create_user(
+    user_data: UserCreate,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    """Создать нового пользователя"""
+    # Проверяем, что email не занят
+    existing = db.query(User).filter(User.email == user_data.email).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
+    
+    # Определяем роль
+    role = UserRole.ADMIN if user_data.role == "admin" else UserRole.USER
+    
+    # Создаём пользователя
+    user = User(
+        email=user_data.email,
+        password_hash=get_password_hash(user_data.password),
+        role=role
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    
+    # Если указана подписка
+    if user_data.subscription_plan and user_data.subscription_plan != "none":
+        try:
+            plan = SubscriptionPlan(user_data.subscription_plan)
+        except ValueError:
+            plan = SubscriptionPlan.DEVELOPER  # По умолчанию premium = developer
+        
+        subscription = Subscription(
+            user_id=user.id,
+            plan=plan,
+            status=SubscriptionStatus.ACTIVE,
+            expires_at=user_data.subscription_expires_at
+        )
+        db.add(subscription)
+        db.commit()
+        db.refresh(user)
+    
+    return user
+
+
+@router.put("/users/{user_id}", response_model=UserResponse)
+def update_user(
+    user_id: int,
+    user_data: UserUpdate,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    """Обновить пользователя (роль и/или подписку)"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    # Обновляем роль
+    if user_data.role is not None:
+        user.role = UserRole.ADMIN if user_data.role == "admin" else UserRole.USER
+    
+    # Обновляем подписку
+    if user_data.subscription_plan is not None:
+        # Ищем активную подписку
+        active_sub = db.query(Subscription).filter(
+            Subscription.user_id == user.id,
+            Subscription.status == SubscriptionStatus.ACTIVE
+        ).first()
+        
+        if user_data.subscription_plan == "none":
+            # Отменяем подписку
+            if active_sub:
+                active_sub.status = SubscriptionStatus.CANCELLED
+        else:
+            # Создаём или обновляем подписку
+            try:
+                plan = SubscriptionPlan(user_data.subscription_plan)
+            except ValueError:
+                plan = SubscriptionPlan.DEVELOPER
+            
+            if active_sub:
+                active_sub.plan = plan
+                active_sub.expires_at = user_data.subscription_expires_at
+            else:
+                new_sub = Subscription(
+                    user_id=user.id,
+                    plan=plan,
+                    status=SubscriptionStatus.ACTIVE,
+                    expires_at=user_data.subscription_expires_at
+                )
+                db.add(new_sub)
+    
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    """Удалить пользователя"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    
+    # Нельзя удалить себя
+    if user.id == admin.id:
+        raise HTTPException(status_code=400, detail="Нельзя удалить свой аккаунт")
+    
+    db.delete(user)
+    db.commit()

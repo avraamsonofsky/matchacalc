@@ -183,6 +183,7 @@
             <button class="active" onclick="switchTab('reports')">Отчёты</button>
             <button onclick="switchTab('values')">Коэффициенты (Values)</button>
             <button onclick="switchTab('scenarios')">Сценарии</button>
+            <button onclick="switchTab('users')">Пользователи</button>
             <button onclick="switchTab('upload')">Загрузить JSON</button>
         </div>
 
@@ -217,6 +218,54 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="tab-content hidden">
+            <div style="margin-bottom: 1rem;">
+                <h3 style="margin-bottom: 0.5rem;">Создать пользователя</h3>
+                <div id="user-create-form" style="display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; margin-bottom: 0.25rem;">Email</label>
+                        <input type="email" id="new-user-email" placeholder="email@example.com" style="width: 200px; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; margin-bottom: 0.25rem;">Пароль</label>
+                        <input type="text" id="new-user-password" placeholder="Пароль" style="width: 150px; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.85rem; margin-bottom: 0.25rem;">Тип</label>
+                        <select id="new-user-type" style="padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;" onchange="Admin.toggleExpiresField()">
+                            <option value="user">Обычный</option>
+                            <option value="premium">Premium</option>
+                            <option value="admin">Админ</option>
+                        </select>
+                    </div>
+                    <div id="new-user-expires-wrapper" style="display: none;">
+                        <label style="display: block; font-size: 0.85rem; margin-bottom: 0.25rem;">Подписка до</label>
+                        <input type="date" id="new-user-expires" style="padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px;">
+                    </div>
+                    <button type="button" class="btn-primary" onclick="Admin.createUser()">Создать</button>
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom: 0.5rem;">Все пользователи</h3>
+            <table class="data-table" id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Подписка</th>
+                        <th>Подписка до</th>
+                        <th>Регистрация</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
         </div>
 
         <!-- Upload JSON Tab -->

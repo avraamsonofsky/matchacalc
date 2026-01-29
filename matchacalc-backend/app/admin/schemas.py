@@ -115,3 +115,43 @@ class MarketReportValueResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+# User management schemas
+from app.db.models import UserRole, SubscriptionPlan, SubscriptionStatus
+
+
+class SubscriptionResponse(BaseModel):
+    id: int
+    plan: SubscriptionPlan
+    status: SubscriptionStatus
+    started_at: Optional[datetime]
+    expires_at: Optional[datetime]
+    
+    class Config:
+        from_attributes = True
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    role: UserRole
+    created_at: datetime
+    subscriptions: List[SubscriptionResponse] = []
+    
+    class Config:
+        from_attributes = True
+
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    role: str = "user"  # "user", "admin"
+    subscription_plan: Optional[str] = None  # "agent", "developer", None
+    subscription_expires_at: Optional[datetime] = None
+
+
+class UserUpdate(BaseModel):
+    role: Optional[str] = None
+    subscription_plan: Optional[str] = None  # "agent", "developer", "none"
+    subscription_expires_at: Optional[datetime] = None

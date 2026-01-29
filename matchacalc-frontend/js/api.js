@@ -59,6 +59,21 @@ const API = {
         });
     },
 
+    async delete(endpoint) {
+        const url = `${this.baseURL}${endpoint}`;
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        // DELETE обычно возвращает 204 No Content
+        return response.status === 204 ? null : response.json();
+    },
+
     // Получить список районов
     async getLocationGroups() {
         return this.get('/reports/location-groups');
