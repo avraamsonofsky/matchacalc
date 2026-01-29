@@ -58,7 +58,20 @@ python scripts/seed_db.py
 - Сценарии (Пессимистичный, Базовый, Оптимистичный)
 - Администратора: `admin@matchacalc.ru` / `admin123`
 
-### 6. Загрузка данных рынка
+### 6. Аккаунты для стаджинга (премиум + админ)
+
+На сервере стаджинга (VPS), в папке бэкенда с `.env`, указывающим на стаджинг-БД:
+
+```bash
+cd /root/matchacalc-backend-staging
+.venv/bin/python scripts/create_staging_users.py
+```
+
+Будут созданы/обновлены:
+- **Премиум:** `premium.stagging@commercial.ru` / `StagingFacePremium333WWW###` (подписка developer)
+- **Админ:** `admin.stagging@commercial.ru` / `StagingFaceAdmin333WWW###` (вход в админку)
+
+### 7. Загрузка данных рынка
 
 ```bash
 source .venv/bin/activate
@@ -69,7 +82,7 @@ python scripts/load_market_data.py ../market_data_Q4_2025.json
 - 3 отчёта (Nikoliers, NF Group, CBRE) за Q4 2025
 - 27 значений рынка (по 9 для каждого отчёта)
 
-### 7. Запуск сервера
+### 8. Запуск сервера
 
 ```bash
 source .venv/bin/activate
