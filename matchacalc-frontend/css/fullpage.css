@@ -172,12 +172,12 @@ body {
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-xs);
 }
 
 .form-group-compact {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .form-group-compact label {
@@ -192,7 +192,7 @@ body {
 .form-group-compact input,
 .form-group-compact select {
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 10px;
     font-size: var(--font-size-small);
     border: 1px solid var(--color-border);
     background-color: var(--bg-primary);
@@ -214,13 +214,13 @@ body {
 }
 
 .date-input-row select {
-    padding: 10px 8px;
+    padding: 8px 6px;
     font-size: var(--font-size-xs);
 }
 
 /* Циан группа */
 .cian-group {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .cian-input-wrapper {
@@ -261,7 +261,7 @@ body {
 
 /* Слайдер компактный */
 .slider-group {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
 }
 
 .slider-container {
