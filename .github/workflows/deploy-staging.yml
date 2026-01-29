@@ -13,7 +13,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Deploy backend code to VPS
+      - name: Ensure staging directories exist on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          script: |
+            mkdir -p /root/matchacalc-backend-staging
+            mkdir -p /var/www/staging
+      
+      - name: Deploy backend code to VPS (staging)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -21,9 +32,9 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           source: "matchacalc-backend/"
-          target: "/root/matchacalc-backend/"
+          target: "/root/matchacalc-backend-staging/"
       
-      - name: Deploy frontend code to VPS
+      - name: Deploy frontend code to VPS (staging)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -31,7 +42,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           source: "matchacalc-frontend/"
-          target: "/var/www/lattecalc/"
+          target: "/var/www/staging/"
       
       - name: Setup and restart backend on VPS
         uses: appleboy/ssh-action@v1.0.3
@@ -59,8 +70,8 @@ jobs:
               fi
             fi
             
-            echo "=== Step 2: Changing to backend directory ==="
-            cd /root/matchacalc-backend || { echo "Directory not found!"; exit 1; }
+            echo "=== Step 2: Changing to staging backend directory ==="
+            cd /root/matchacalc-backend-staging || { echo "Directory not found!"; exit 1; }
             pwd
             
             echo "=== Step 3: Creating virtual environment if needed ==="

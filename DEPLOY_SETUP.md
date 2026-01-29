@@ -69,12 +69,59 @@ ssh-copy-id -i ~/.ssh/id_ed25519.pub root@91.201.53.228
 3. Проверь GitHub Actions: `Actions` → должен запуститься workflow `Deploy to Staging`
 
 4. После успешного деплоя проверь:
-   - Staging: `http://91.201.53.228:8080` или `http://staging.matchacalc.ru:8080`
-   - Production: `http://91.201.53.228:3000` или `http://commercial-invest.ru:3000`
+   - **Staging (отдельный фронт + бэк):** фронт в `/var/www/staging`, бэк на порту 8080 из `/root/matchacalc-backend-staging`. Доступ: `http://91.201.53.228:8080` (бэк) или через Nginx по поддомену.
+   - **Production:** фронт в `/var/www/lattecalc`, бэк на порту 3000 из `/root/matchacalc-backend`. Доступ: `http://91.201.53.228:3000` (бэк) или основной домен.
 
-## 4. Настройка Nginx (опционально)
+## 4. Разделение Staging и Production
+
+- **Staging** (ветка `staging`): деплой только в стагинг-каталоги; прод не трогается.
+  - Бэкенд: `/root/matchacalc-backend-staging`, порт **8080**.
+  - Фронтенд: `/var/www/staging`.
+- **Production** (ветка `main`): деплой только в прод-каталоги; стагинг не трогается.
+  - Бэкенд: `/root/matchacalc-backend`, порт **3000**.
+  - Фронтенд: `/var/www/lattecalc`.
+
+Один фронт привязан к одному бэку: стагинг-фронт ходит в стагинг-бэк (через Nginx или порт 8080), прод-фронт — в прод-бэк (через Nginx или порт 3000).
+
+## 5. Настройка Nginx (опционально)
 
 Если хочешь использовать домены вместо IP:порт, настрой Nginx на сервере:
+
+```nginx
+# /etc/nginx/sites-available/staging.commercial-invest.ru (стагинг: свой фронт + свой бэк)
+server {
+    listen 80;
+    server_name staging.commercial-invest.ru;
+    root /var/www/staging;
+    index index.html;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+# /etc/nginx/sites-available/commercial-invest.ru (прод)
+server {
+    listen 80;
+    server_name commercial-invest.ru;
+    root /var/www/lattecalc;
+    index index.html;
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+Пример со старым именем (если нужно):
 
 ```nginx
 # /etc/nginx/sites-available/staging.matchacalc.ru
