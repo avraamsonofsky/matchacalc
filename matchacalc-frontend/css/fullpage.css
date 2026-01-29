@@ -1,7 +1,6 @@
 /* Full-page scroll styles */
 
 html {
-    scroll-snap-type: y mandatory;
     overflow-y: scroll;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
@@ -20,8 +19,6 @@ body {
 
 .fullpage-section {
     min-height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: normal; /* Позволяет прокручивать несколько секций подряд */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -231,6 +228,9 @@ body {
 
 .cian-input-wrapper.disabled {
     opacity: 0.5;
+}
+
+.cian-input-wrapper.disabled input {
     pointer-events: none;
 }
 
@@ -257,6 +257,8 @@ body {
     align-items: center;
     justify-content: center;
     cursor: help;
+    pointer-events: auto;
+    z-index: 1;
 }
 
 /* Слайдер компактный */
