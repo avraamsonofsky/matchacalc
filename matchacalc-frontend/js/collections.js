@@ -10,7 +10,7 @@ const Collections = {
     async init() {
         // Проверяем авторизацию
         try {
-            this.currentUser = await API.get('/api/v1/auth/me');
+            this.currentUser = await API.get('/auth/me');
             
             // Проверяем подписку (любая активная) или роль admin
             const hasSubscription = this.currentUser.subscription && 
@@ -93,7 +93,7 @@ const Collections = {
     
     async loadCollections() {
         try {
-            this.collections = await API.get('/api/v1/collections');
+            this.collections = await API.get('/collections');
             this.renderCollections();
         } catch (e) {
             console.error('Ошибка загрузки коллекций:', e);
@@ -149,7 +149,7 @@ const Collections = {
         }
         
         try {
-            const collection = await API.post('/api/v1/collections', {
+            const collection = await API.post('/collections', {
                 name,
                 description: description || null
             });
@@ -173,7 +173,7 @@ const Collections = {
         this.currentCollectionId = id;
         
         try {
-            const collection = await API.get(`/api/v1/collections/${id}`);
+            const collection = await API.get(`/collections/${id}`);
             
             document.getElementById('view-collection-title').textContent = collection.name;
             document.getElementById('view-collection-description').textContent = 
@@ -256,7 +256,7 @@ const Collections = {
         if (!this.currentCollectionId) return;
         
         try {
-            const result = await API.post(`/api/v1/collections/${this.currentCollectionId}/publish`);
+            const result = await API.post(`/collections/${this.currentCollectionId}/publish`);
             
             document.getElementById('public-link-container').classList.remove('hidden');
             document.getElementById('public-link-input').value = 
@@ -345,7 +345,7 @@ const Collections = {
         document.getElementById('btn-import-lots').disabled = true;
         
         try {
-            const result = await API.post(`/api/v1/collections/${this.currentCollectionId}/lots`, {
+            const result = await API.post(`/collections/${this.currentCollectionId}/lots`, {
                 cian_urls: urls
             });
             
@@ -378,7 +378,7 @@ const Collections = {
         if (!confirm('Удалить лот из подборки?')) return;
         
         try {
-            await API.delete(`/api/v1/collections/${this.currentCollectionId}/lots/${lotId}`);
+            await API.delete(`/collections/${this.currentCollectionId}/lots/${lotId}`);
             await this.openCollection(this.currentCollectionId);
             await this.loadCollections();
         } catch (e) {
@@ -399,7 +399,7 @@ const Collections = {
         
         // Загружаем отчёты
         try {
-            const reports = await API.get('/api/v1/reports');
+            const reports = await API.get('/reports');
             const select = document.getElementById('lot-report');
             select.innerHTML = reports.map(r => 
                 `<option value="${r.id}">${r.provider} • ${r.period}</option>`
@@ -426,7 +426,7 @@ const Collections = {
         };
         
         try {
-            const result = await API.post(`/api/v1/calc/from-lot/${lotId}`, data);
+            const result = await API.post(`/calc/from-lot/${lotId}`, data);
             this.showLotResults(result);
         } catch (e) {
             alert('Ошибка расчёта: ' + e.message);
