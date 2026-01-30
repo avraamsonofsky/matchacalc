@@ -123,49 +123,50 @@
     /* Hero секция - полный экран */
     .fullpage-section.hero-section {
         min-height: 100vh;
-        min-height: 100dvh; /* Dynamic viewport height для мобильных */
-        padding: var(--spacing-lg) var(--spacing-sm);
+        min-height: 100dvh;
+        padding: var(--spacing-xl) var(--spacing-sm);
+        padding-top: 80px; /* Отступ от шапки */
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
     
     .hero-text-modern {
-        text-align: left;
-        align-items: flex-start;
+        text-align: center;
+        align-items: center;
     }
     
     .hero-logo-img {
-        max-width: 140px;
+        max-width: 120px;
     }
     
     .hero-headline-modern {
-        align-items: flex-start;
+        align-items: center;
     }
     
     .line-1, .line-2 {
-        font-size: 24px;
-        text-align: left;
-        letter-spacing: 0.03em;
+        font-size: 26px;
+        text-align: center;
+        letter-spacing: 0.02em;
     }
     
     .hero-description-modern {
-        text-align: left;
-        font-size: var(--font-size-small);
-        max-width: 100%;
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 0.05em;
     }
     
     .hero-cta-modern {
-        width: 100%;
-        justify-content: center;
-        padding: 16px var(--spacing-md);
-        font-size: var(--font-size-body);
+        width: auto;
+        padding: 14px 36px;
+        font-size: 12px;
     }
     
     /* Калькулятор секция */
     .fullpage-section.calculator-section {
         min-height: auto;
-        padding: var(--spacing-lg) var(--spacing-sm);
+        padding: var(--spacing-md) var(--spacing-sm);
+        padding-top: 70px; /* Отступ от шапки при скролле */
     }
     
     .section-header {
@@ -174,7 +175,9 @@
     }
     
     .section-header h2 {
-        font-size: 24px;
+        font-size: 20px;
+        letter-spacing: 0.05em;
+        font-weight: var(--font-weight-normal);
     }
     
     /* Форма калькулятора - отдельный блок */
@@ -380,17 +383,17 @@
 /* Маленькие мобильные (iPhone SE и т.п.) */
 @media (max-width: 375px) {
     .hero-logo-img {
-        max-width: 120px;
+        max-width: 100px;
     }
     
     .line-1, .line-2 {
-        font-size: 20px;
-        text-align: left;
+        font-size: 22px;
+        text-align: center;
     }
     
     .hero-description-modern {
-        font-size: 14px;
-        text-align: left;
+        font-size: 10px;
+        text-align: center;
     }
     
     .form-group-compact input,

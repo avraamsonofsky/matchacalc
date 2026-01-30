@@ -10,12 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculatorSection = document.getElementById('calculator');
     
     // Показываем/скрываем навбар в зависимости от позиции прокрутки
+    // На мобильных всегда показываем
     const updateNavbar = () => {
         if (!navbar) return;
         
-        const scrollTop = window.scrollY;
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            navbar.classList.remove('hidden');
+            return;
+        }
         
-        // Скрываем навбар, если прокрутили вниз больше чем на 100px
+        const scrollTop = window.scrollY;
         if (scrollTop > 100) {
             navbar.classList.add('hidden');
         } else {
@@ -23,13 +28,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору
+    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору с учётом шапки
     if (scrollToCalcBtn && calculatorSection) {
         scrollToCalcBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            calculatorSection.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const navbarHeight = navbar ? navbar.offsetHeight : 60;
+            const targetPosition = calculatorSection.offsetTop - navbarHeight - 10;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
             });
         });
     }

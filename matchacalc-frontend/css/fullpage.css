@@ -40,7 +40,7 @@ body {
 
 /* Заголовок секции */
 .section-header {
-    text-align: left;
+    text-align: center;
     margin-bottom: var(--spacing-md);
     max-width: 1100px;
     margin-left: auto;
@@ -49,11 +49,12 @@ body {
 }
 
 .section-header h2 {
-    font-size: var(--font-size-h2);
-    font-weight: var(--font-weight-light);
+    font-size: 28px;
+    font-weight: var(--font-weight-normal);
     color: var(--color-text-primary);
-    letter-spacing: var(--letter-spacing-h2);
+    letter-spacing: 0.05em;
     margin: 0;
+    text-transform: uppercase;
 }
 
 /* Benefits секция */
