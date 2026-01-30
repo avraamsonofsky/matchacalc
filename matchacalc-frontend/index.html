@@ -61,7 +61,7 @@
                         ПРОСТОЙ И ЧЕСТНЫЙ КАЛЬКУЛЯТОР ДЛЯ ОЦЕНКИ<br>
                         ИНВЕСТИЦИОННОЙ ПРИВЛЕКАТЕЛЬНОСТИ НЕДВИЖИМОСТИ
                     </p>
-                    <a href="#calculator" class="hero-cta-modern" id="scroll-to-calc">
+                    <a href="#calculator" class="hero-cta-modern" id="scroll-to-calc" onclick="const target = document.getElementById('calculator'); if(target) { const y = target.getBoundingClientRect().top + window.pageYOffset - 80; window.scrollTo({top: y, behavior: 'smooth'}); console.log('Button clicked'); } return false;">
                         НАЧАТЬ РАСЧЁТ
                     </a>
                 </div>
@@ -374,22 +374,6 @@
     if (navRegister && navRegister.parentElement) {
         navRegister.parentElement.classList.remove('hidden');
         navRegister.parentElement.style.display = 'list-item';
-    }
-
-    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору
-    const scrollToCalcBtn = document.getElementById('scroll-to-calc');
-    const calculatorSection = document.getElementById('calculator');
-    if (scrollToCalcBtn && calculatorSection) {
-        scrollToCalcBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const navbarHeight = 70;
-            const targetPosition = calculatorSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
-        });
     }
 
     // Затем инициализируем Auth (проверка авторизации и обновление навигации)
