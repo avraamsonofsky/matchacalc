@@ -289,7 +289,7 @@ const Admin = {
             // Определяем тип для select
             let userType = 'user';
             if (user.role === 'ADMIN') userType = 'admin';
-            else if (subPlan === 'developer' || subPlan === 'agent' || subPlan === 'premium') userType = 'premium';
+            else if (subPlan === 'DEVELOPER' || subPlan === 'AGENT' || subPlan === 'PREMIUM') userType = 'premium';
             
             const createdAt = new Date(user.created_at).toLocaleDateString('ru-RU');
             
