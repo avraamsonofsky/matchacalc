@@ -53,12 +53,13 @@ p, span, a, button, input, select, textarea, label {
 }
 
 .logo {
-    font-size: var(--font-size-h4);
-    font-weight: var(--font-weight-medium);
+    font-family: var(--font-family-logo);
+    font-size: 28px;
+    font-weight: var(--font-weight-normal);
     color: var(--color-text-primary);
     text-decoration: none;
-    letter-spacing: var(--letter-spacing-logo);
-    line-height: var(--line-height-h4);
+    letter-spacing: 0.02em;
+    line-height: 1;
 }
 
 /* Бургер-меню скрыто на десктопе */

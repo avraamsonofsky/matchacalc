@@ -135,21 +135,8 @@
         align-items: flex-start;
     }
     
-    .latte-brand {
-        font-size: 42px;
-    }
-    
-    .calc-overlay {
-        font-size: 14px;
-        bottom: -2px;
-        left: 0;
-        transform: none;
-    }
-    
-    .brand-stack {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+    .hero-logo-img {
+        max-width: 140px;
     }
     
     .hero-headline-modern {
@@ -157,8 +144,9 @@
     }
     
     .line-1, .line-2 {
-        font-size: 26px;
+        font-size: 24px;
         text-align: left;
+        letter-spacing: 0.03em;
     }
     
     .hero-description-modern {
@@ -391,18 +379,12 @@
 
 /* Маленькие мобильные (iPhone SE и т.п.) */
 @media (max-width: 375px) {
-    .latte-brand {
-        font-size: 36px;
-    }
-    
-    .calc-overlay {
-        font-size: 12px;
-        left: 0;
-        transform: none;
+    .hero-logo-img {
+        max-width: 120px;
     }
     
     .line-1, .line-2 {
-        font-size: 22px;
+        font-size: 20px;
         text-align: left;
     }
     

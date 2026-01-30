@@ -113,32 +113,6 @@ body {
     }
 }
 
-/* Hero лого с наложением */
-.brand-stack {
-    position: relative;
-    display: inline-block;
-}
-
-.latte-brand {
-    font-size: var(--font-size-hero);
-    font-weight: var(--font-weight-light);
-    color: var(--color-text-primary);
-    letter-spacing: var(--letter-spacing-hero);
-    line-height: var(--line-height-hero);
-    display: block;
-}
-
-.calc-overlay {
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    font-size: 24px;
-    font-weight: var(--font-weight-normal);
-    color: var(--color-accent);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-}
-
 /* Калькулятор компактный layout */
 .calculator-layout-compact {
     display: grid;
@@ -468,12 +442,11 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .latte-brand {
-        font-size: 48px;
+    .hero-logo-img {
+        max-width: 160px;
     }
     
-    .calc-overlay {
-        font-size: 16px;
-        bottom: -4px;
+    .line-1, .line-2 {
+        font-size: 32px;
     }
 }

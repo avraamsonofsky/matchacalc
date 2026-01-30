@@ -27,24 +27,13 @@
 
 .hero-logo-modern {
     display: flex;
-    gap: var(--spacing-xs);
-    align-items: baseline;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
 }
 
-.matcha-brand {
-    font-size: var(--font-size-hero);
-    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
-    color: var(--color-text-primary);
-    letter-spacing: var(--letter-spacing-hero);
-    line-height: var(--line-height-hero);
-}
-
-.calc-brand {
-    font-size: var(--font-size-hero);
-    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
-    color: var(--color-text-primary);
-    letter-spacing: var(--letter-spacing-hero);
-    line-height: var(--line-height-hero);
+.hero-logo-img {
+    max-width: 200px;
+    height: auto;
 }
 
 .hero-headline-modern {
@@ -55,11 +44,12 @@
 
 .line-1,
 .line-2 {
-    font-size: var(--font-size-hero);
-    font-weight: var(--font-weight-light);  /* 300 - поддерживает кириллицу */
+    font-size: 48px;
+    font-weight: var(--font-weight-light);
     color: var(--color-text-primary);
-    line-height: var(--line-height-hero);
-    letter-spacing: var(--letter-spacing-hero);
+    line-height: 1.1;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .hero-description-modern {
