@@ -12,9 +12,10 @@ const Collections = {
         try {
             this.currentUser = await API.get('/api/v1/auth/me');
             
-            // Проверяем подписку
+            // Проверяем подписку (любая активная) или роль admin
             const hasSubscription = this.currentUser.subscription && 
-                this.currentUser.subscription.status === 'active';
+                this.currentUser.subscription.status === 'active' &&
+                this.currentUser.subscription.plan !== 'none';
             
             if (hasSubscription || this.currentUser.role === 'admin') {
                 document.getElementById('no-subscription-notice').classList.add('hidden');

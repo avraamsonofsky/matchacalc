@@ -108,11 +108,12 @@ const Auth = {
             }
         }
         
-        // Проверяем платную подписку (agent или developer)
+        // Проверяем платную подписку (agent или developer) или роль admin
         const hasPaidSubscription = user.subscription && 
             user.subscription.status === 'active' && 
-            (user.subscription.plan === 'agent' || user.subscription.plan === 'developer');
+            user.subscription.plan !== 'none';
         
+        // Админы и подписчики имеют доступ к парсеру и подборкам
         if (hasPaidSubscription || user.role === 'admin') {
             if (navCollections) {
                 navCollections.classList.remove('hidden');

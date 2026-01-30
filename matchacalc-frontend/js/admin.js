@@ -303,7 +303,6 @@ const Admin = {
                         <option value="admin" ${userType === 'admin' ? 'selected' : ''}>Админ</option>
                     </select>
                 </td>
-                <td>${subPlan !== 'none' ? subPlan : '—'}</td>
                 <td>
                     <input type="date" data-field="expires" value="${subExpires}" 
                            style="width: 130px; ${userType !== 'premium' ? 'display:none;' : ''}">

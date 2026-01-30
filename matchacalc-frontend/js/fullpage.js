@@ -32,13 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (scrollToCalcBtn && calculatorSection) {
         scrollToCalcBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const navbarHeight = navbar ? navbar.offsetHeight : 60;
-            const targetPosition = calculatorSection.offsetTop - navbarHeight - 10;
+            e.stopPropagation();
+            // Навбар может быть скрыт, берём фиксированное значение
+            const navbarHeight = 70;
+            const targetPosition = calculatorSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
             window.scrollTo({
                 top: targetPosition,
                 behavior: 'smooth'
             });
+            console.log('Scroll to calculator:', targetPosition);
         });
+        console.log('Scroll button initialized');
+    } else {
+        console.warn('Scroll button or calculator section not found', { scrollToCalcBtn, calculatorSection });
     }
     
     // Слушатель scroll для навбара
