@@ -54,7 +54,7 @@ const AccessControl = {
     
     hasActiveSubscription() {
         return this.subscription && 
-               this.subscription.status === 'active' && 
+               this.subscription.status === 'ACTIVE' && 
                (this.subscription.plan === 'agent' || this.subscription.plan === 'developer');
     },
     

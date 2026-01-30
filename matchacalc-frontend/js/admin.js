@@ -4,7 +4,7 @@ const Admin = {
     reports: [],
 
     async init() {
-        if (!Auth.user || Auth.user.role !== 'admin') {
+        if (!Auth.user || Auth.user.role !== 'ADMIN') {
             window.location.href = 'login.html';
             return;
         }
@@ -282,13 +282,13 @@ const Admin = {
             tr.setAttribute('data-user-id', user.id);
             
             // Определяем текущую подписку
-            const activeSub = user.subscriptions.find(s => s.status === 'active');
-            const subPlan = activeSub ? activeSub.plan : 'none';
+            const activeSub = user.subscriptions.find(s => s.status === 'ACTIVE');
+            const subPlan = activeSub ? activeSub.plan : 'NONE';
             const subExpires = activeSub && activeSub.expires_at ? activeSub.expires_at.split('T')[0] : '';
             
             // Определяем тип для select
             let userType = 'user';
-            if (user.role === 'admin') userType = 'admin';
+            if (user.role === 'ADMIN') userType = 'admin';
             else if (subPlan === 'developer' || subPlan === 'agent' || subPlan === 'premium') userType = 'premium';
             
             const createdAt = new Date(user.created_at).toLocaleDateString('ru-RU');
@@ -354,8 +354,8 @@ const Admin = {
         const payload = {
             email,
             password,
-            role: type === 'admin' ? 'admin' : 'user',
-            subscription_plan: type === 'premium' ? 'premium' : null,
+            role: type === 'admin' ? 'ADMIN' : 'USER',
+            subscription_plan: type === 'premium' ? 'PREMIUM' : null,
             subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
         };
 
@@ -383,8 +383,8 @@ const Admin = {
         const expiresInput = tr.querySelector('[data-field="expires"]').value;
 
         const payload = {
-            role: type === 'admin' ? 'admin' : 'user',
-            subscription_plan: type === 'premium' ? 'premium' : 'none',
+            role: type === 'admin' ? 'ADMIN' : 'USER',
+            subscription_plan: type === 'premium' ? 'PREMIUM' : 'NONE',
             subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
         };
 

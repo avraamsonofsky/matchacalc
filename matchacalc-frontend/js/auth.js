@@ -99,7 +99,7 @@ const Auth = {
         
         // Admin link
         if (navAdmin) {
-            if (user.role === 'admin') {
+            if (user.role === 'ADMIN') {
                 navAdmin.classList.remove('hidden');
                 navAdmin.style.display = 'list-item';
             } else {
@@ -110,11 +110,11 @@ const Auth = {
         
         // Проверяем платную подписку (agent или developer) или роль admin
         const hasPaidSubscription = user.subscription && 
-            user.subscription.status === 'active' && 
-            user.subscription.plan !== 'none';
+            user.subscription.status === 'ACTIVE' && 
+            user.subscription.plan !== 'NONE';
         
         // Админы и подписчики имеют доступ к парсеру и подборкам
-        if (hasPaidSubscription || user.role === 'admin') {
+        if (hasPaidSubscription || user.role === 'ADMIN') {
             if (navCollections) {
                 navCollections.classList.remove('hidden');
                 navCollections.style.display = 'list-item';

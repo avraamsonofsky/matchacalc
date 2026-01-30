@@ -286,7 +286,7 @@ def create_user(
         raise HTTPException(status_code=400, detail="Email уже зарегистрирован")
     
     # Определяем роль
-    role = UserRole.ADMIN if user_data.role == "admin" else UserRole.USER
+    role = UserRole.ADMIN if user_data.role == "ADMIN" else UserRole.USER
     
     # Создаём пользователя
     user = User(
@@ -332,7 +332,7 @@ def update_user(
     
     # Обновляем роль
     if user_data.role is not None:
-        user.role = UserRole.ADMIN if user_data.role == "admin" else UserRole.USER
+        user.role = UserRole.ADMIN if user_data.role == "ADMIN" else UserRole.USER
     
     # Обновляем подписку
     if user_data.subscription_plan is not None:
@@ -342,7 +342,7 @@ def update_user(
             Subscription.status == SubscriptionStatus.ACTIVE
         ).first()
         
-        if user_data.subscription_plan == "none":
+        if user_data.subscription_plan == "NONE":
             # Отменяем подписку
             if active_sub:
                 active_sub.status = SubscriptionStatus.CANCELLED

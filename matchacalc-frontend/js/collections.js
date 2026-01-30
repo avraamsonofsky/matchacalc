@@ -14,10 +14,10 @@ const Collections = {
             
             // Проверяем подписку (любая активная) или роль admin
             const hasSubscription = this.currentUser.subscription && 
-                this.currentUser.subscription.status === 'active' &&
-                this.currentUser.subscription.plan !== 'none';
+                this.currentUser.subscription.status === 'ACTIVE' &&
+                this.currentUser.subscription.plan !== 'NONE';
             
-            if (hasSubscription || this.currentUser.role === 'admin') {
+            if (hasSubscription || this.currentUser.role === 'ADMIN') {
                 document.getElementById('no-subscription-notice').classList.add('hidden');
                 document.getElementById('collections-content').classList.remove('hidden');
                 await this.loadCollections();
