@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои подборки - LatteCalc</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Arizonia&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/typography.css">
+    <link rel="stylesheet" href="css/forms-modern.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/collections.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">LatteCalc</a>
+            <ul class="nav-menu">
+                <li><a href="login.html" id="nav-login">Вход</a></li>
+                <li><a href="register.html" id="nav-register">Регистрация</a></li>
+                <li><a href="subscription.html">Подписка</a></li>
+                <li><a href="collections.html" class="active">Подборки</a></li>
+                <li><a href="index.html">Калькулятор</a></li>
+                <li class="hidden"><a href="#" id="nav-profile">Профиль</a></li>
+                <li class="hidden"><a href="#" id="nav-logout">Выход</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="collections-container">
+        <!-- Блок для неавторизованных / без подписки -->
+        <div id="no-subscription-notice" class="notice-card hidden">
+            <h2>Подборки доступны по подписке</h2>
+            <p>Создавайте коллекции объектов, добавляйте лоты через ссылки с Циан и делитесь подборками с клиентами.</p>
+            <a href="subscription.html" class="btn-primary">Оформить подписку</a>
+        </div>
+
+        <!-- Основной контент для подписчиков -->
+        <div id="collections-content" class="hidden">
+            <div class="collections-header">
+                <h1>Мои подборки</h1>
+                <button id="btn-create-collection" class="btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Создать подборку
+                </button>
+            </div>
+
+            <!-- Пустое состояние -->
+            <div id="empty-state" class="empty-state hidden">
+                <div class="empty-icon">📁</div>
+                <h3>У вас пока нет подборок</h3>
+                <p>Создайте первую подборку, чтобы начать добавлять объекты недвижимости</p>
+            </div>
+
+            <!-- Список коллекций -->
+            <div id="collections-list" class="collections-list"></div>
+        </div>
+    </div>
+
+    <!-- Модалка создания коллекции -->
+    <div id="create-collection-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Создать подборку</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form id="create-collection-form">
+                <div class="form-group">
+                    <label for="collection-name">Название</label>
+                    <input type="text" id="collection-name" placeholder="Офисы Москва-Сити для инвестора" required>
+                </div>
+                <div class="form-group">
+                    <label for="collection-description">Описание (необязательно)</label>
+                    <textarea id="collection-description" placeholder="Подборка под стратегию 7+ лет..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary modal-cancel">Отмена</button>
+                    <button type="submit" class="btn-primary">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модалка просмотра коллекции -->
+    <div id="view-collection-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 id="view-collection-title">Название подборки</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="view-collection-description" class="collection-description"></p>
+                
+                <!-- Кнопки действий -->
+                <div class="collection-actions">
+                    <button id="btn-add-lots" class="btn-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Добавить лоты
+                    </button>
+                    <button id="btn-publish-collection" class="btn-primary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                        Опубликовать
+                    </button>
+                </div>
+                
+                <!-- Публичная ссылка -->
+                <div id="public-link-container" class="public-link-container hidden">
+                    <label>Публичная ссылка:</label>
+                    <div class="public-link-row">
+                        <input type="text" id="public-link-input" readonly>
+                        <button id="btn-copy-link" class="btn-icon" title="Копировать">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Список лотов -->
+                <div id="lots-list" class="lots-grid"></div>
+                
+                <!-- Пустое состояние для лотов -->
+                <div id="lots-empty" class="lots-empty hidden">
+                    <p>В этой подборке пока нет объектов</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка добавления лотов -->
+    <div id="add-lots-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Добавить лоты</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint">Вставьте ссылки на объекты с Циан, Авито или Яндекс.Недвижимость (до 20 лотов в коллекции)</p>
+                <div id="url-inputs-container">
+                    <div class="url-input-row">
+                        <input type="url" class="url-input" placeholder="https://www.cian.ru/sale/commercial/...">
+                        <button type="button" class="btn-remove-url hidden">&times;</button>
+                    </div>
+                </div>
+                <button type="button" id="btn-add-more-url" class="btn-link">+ Добавить ещё ссылку</button>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary modal-cancel">Отмена</button>
+                    <button type="button" id="btn-import-lots" class="btn-primary">Импортировать</button>
+                </div>
+                <div id="import-progress" class="import-progress hidden">
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <p class="progress-text">Импортируем лоты...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка калькулятора для лота -->
+    <div id="lot-calculator-modal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Расчёт доходности</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="lot-info">
+                    <img id="lot-image" src="" alt="Планировка" class="lot-image">
+                    <div class="lot-details">
+                        <p><strong>Адрес:</strong> <span id="lot-address"></span></p>
+                        <p><strong>Цена:</strong> <span id="lot-price"></span></p>
+                        <p><strong>Площадь:</strong> <span id="lot-area"></span> м²</p>
+                    </div>
+                </div>
+                
+                <div class="calc-controls">
+                    <div class="form-group">
+                        <label for="lot-scenario">Прогноз</label>
+                        <select id="lot-scenario">
+                            <option value="pes">Пессимистичный</option>
+                            <option value="base" selected>Базовый</option>
+                            <option value="opt">Оптимистичный</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lot-report">Отчёт</label>
+                        <select id="lot-report"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Срок владения: <span id="lot-years-value">7</span> лет</label>
+                        <input type="range" id="lot-years" min="1" max="15" value="7">
+                    </div>
+                </div>
+                
+                <button id="btn-calc-lot" class="btn-primary">Рассчитать</button>
+                
+                <div id="lot-results" class="lot-results hidden">
+                    <!-- Результаты будут вставлены динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/collections.js"></script>
+</body>
+</html>

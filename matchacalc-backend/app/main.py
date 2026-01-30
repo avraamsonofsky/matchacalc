@@ -7,6 +7,8 @@ from app.auth.routes import router as auth_router
 from app.calc.routes import router as calc_router
 from app.reports.routes import router as reports_router
 from app.admin.routes import router as admin_router
+from app.lots.routes import router as lots_router
+from app.collections.routes import router as collections_router
 from app.ratelimit.middleware import RateLimitMiddleware
 
 app = FastAPI(
@@ -32,6 +34,8 @@ app.include_router(auth_router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(calc_router, prefix="/api/v1/calc", tags=["calc"])
 app.include_router(reports_router, prefix="/api/v1/reports", tags=["reports"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["admin"])
+app.include_router(lots_router, prefix="/api/v1/lots", tags=["lots"])
+app.include_router(collections_router, prefix="/api/v1/collections", tags=["collections"])
 
 
 @app.get("/")

@@ -55,10 +55,9 @@ const Auth = {
             parent.classList.add('hidden');
             parent.style.display = 'none';
         }
-        if (navCollections && navCollections.parentElement) {
-            const parent = navCollections.parentElement;
-            parent.classList.add('hidden');
-            parent.style.display = 'none';
+        if (navCollections) {
+            navCollections.classList.add('hidden');
+            navCollections.style.display = 'none';
         }
         if (navAdmin) {
             navAdmin.classList.add('hidden');
@@ -114,11 +113,10 @@ const Auth = {
             user.subscription.status === 'active' && 
             (user.subscription.plan === 'agent' || user.subscription.plan === 'developer');
         
-        if (hasPaidSubscription) {
-            if (navCollections && navCollections.parentElement) {
-                const parent = navCollections.parentElement;
-                parent.classList.remove('hidden');
-                parent.style.display = 'list-item';
+        if (hasPaidSubscription || user.role === 'admin') {
+            if (navCollections) {
+                navCollections.classList.remove('hidden');
+                navCollections.style.display = 'list-item';
             }
             // Разблокировать поле Циан
             const cianInput = document.getElementById('cian-url');
