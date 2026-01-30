@@ -1,11 +1,12 @@
 /**
- * Управление коллекциями
+ * Управление коллекциями - упрощённый UX
  */
 
 const Collections = {
     currentUser: null,
     collections: [],
     currentCollectionId: null,
+    currentLots: [],
     
     async init() {
         // Проверяем авторизацию
@@ -37,12 +38,7 @@ const Collections = {
     setupEventListeners() {
         // Создание коллекции
         document.getElementById('btn-create-collection')?.addEventListener('click', () => {
-            this.showModal('create-collection-modal');
-        });
-        
-        document.getElementById('create-collection-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await this.createCollection();
+            this.openModal();
         });
         
         // Закрытие модалок
@@ -56,19 +52,14 @@ const Collections = {
             });
         });
         
-        // Добавление лотов
-        document.getElementById('btn-add-lots')?.addEventListener('click', () => {
-            this.hideModal('view-collection-modal');
-            this.showModal('add-lots-modal');
-            this.resetUrlInputs();
-        });
-        
+        // Добавление URL инпутов
         document.getElementById('btn-add-more-url')?.addEventListener('click', () => {
             this.addUrlInput();
         });
         
-        document.getElementById('btn-import-lots')?.addEventListener('click', async () => {
-            await this.importLots();
+        // Сохранение коллекции
+        document.getElementById('btn-save-collection')?.addEventListener('click', async () => {
+            await this.saveCollection();
         });
         
         // Публикация коллекции
@@ -134,12 +125,74 @@ const Collections = {
         list.querySelectorAll('.collection-card').forEach(card => {
             card.addEventListener('click', () => {
                 const id = parseInt(card.dataset.id);
-                this.openCollection(id);
+                this.openModal(id);
             });
         });
     },
     
-    async createCollection() {
+    // Открыть модалку (создание или редактирование)
+    async openModal(collectionId = null) {
+        this.currentCollectionId = collectionId;
+        this.currentLots = [];
+        
+        const modal = document.getElementById('collection-modal');
+        const title = document.getElementById('modal-title');
+        const nameInput = document.getElementById('collection-name');
+        const descInput = document.getElementById('collection-description');
+        const publishBtn = document.getElementById('btn-publish-collection');
+        const linkContainer = document.getElementById('public-link-container');
+        const existingLotsSection = document.getElementById('existing-lots-section');
+        
+        // Сбросить URL инпуты
+        this.resetUrlInputs();
+        
+        if (collectionId) {
+            // Редактирование существующей
+            title.textContent = 'Редактировать подборку';
+            publishBtn.classList.remove('hidden');
+            
+            try {
+                const collection = await API.get(`/collections/${collectionId}`);
+                nameInput.value = collection.name;
+                descInput.value = collection.description || '';
+                this.currentLots = collection.lots || [];
+                
+                // Публичная ссылка
+                if (collection.public_slug) {
+                    linkContainer.classList.remove('hidden');
+                    document.getElementById('public-link-input').value = 
+                        window.location.origin + '/c/' + collection.public_slug;
+                } else {
+                    linkContainer.classList.add('hidden');
+                }
+                
+                // Показать существующие лоты
+                if (this.currentLots.length > 0) {
+                    existingLotsSection.classList.remove('hidden');
+                    this.renderLots(this.currentLots);
+                } else {
+                    existingLotsSection.classList.add('hidden');
+                }
+            } catch (e) {
+                alert('Ошибка загрузки коллекции: ' + e.message);
+                return;
+            }
+        } else {
+            // Создание новой
+            title.textContent = 'Новая подборка';
+            nameInput.value = '';
+            descInput.value = '';
+            publishBtn.classList.add('hidden');
+            linkContainer.classList.add('hidden');
+            existingLotsSection.classList.add('hidden');
+        }
+        
+        modal.classList.remove('hidden');
+        nameInput.focus();
+    },
+    
+    // Сохранить коллекцию (создать или обновить) + импорт лотов
+    async saveCollection() {
         const name = document.getElementById('collection-name').value.trim();
         const description = document.getElementById('collection-description').value.trim();
         
@@ -148,70 +201,103 @@ const Collections = {
             return;
         }
         
+        const saveBtn = document.getElementById('btn-save-collection');
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Сохраняем...';
+        
         try {
-            const collection = await API.post('/collections', {
-                name,
-                description: description || null
-            });
+            let collectionId = this.currentCollectionId;
             
-            this.collections.unshift(collection);
-            this.renderCollections();
-            this.hideModal('create-collection-modal');
+            // Создание или обновление
+            if (!collectionId) {
+                // Создаём новую
+                const collection = await API.post('/collections', {
+                    name,
+                    description: description || null
+                });
+                collectionId = collection.id;
+                this.currentCollectionId = collectionId;
+            } else {
+                // Обновляем существующую (TODO: добавить API для обновления)
+                // Пока просто продолжаем
+            }
             
-            // Очищаем форму
-            document.getElementById('collection-name').value = '';
-            document.getElementById('collection-description').value = '';
+            // Импорт лотов
+            const urls = this.getUrls();
+            if (urls.length > 0) {
+                await this.importLots(collectionId, urls);
+            }
             
-            // Открываем созданную коллекцию
-            this.openCollection(collection.id);
+            // Обновляем список и закрываем
+            await this.loadCollections();
+            this.hideAllModals();
+            
         } catch (e) {
-            alert('Ошибка создания коллекции: ' + e.message);
+            alert('Ошибка сохранения: ' + e.message);
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Сохранить';
         }
     },
     
-    async openCollection(id) {
-        this.currentCollectionId = id;
+    // Получить URL из инпутов
+    getUrls() {
+        const inputs = document.querySelectorAll('#url-inputs-container .url-input');
+        const urls = [];
+        
+        inputs.forEach(input => {
+            const url = input.value.trim();
+            if (url) {
+                urls.push(url);
+            }
+        });
+        
+        return urls;
+    },
+    
+    // Импорт лотов
+    async importLots(collectionId, urls) {
+        const progress = document.getElementById('import-progress');
+        const progressFill = progress.querySelector('.progress-fill');
+        const progressText = progress.querySelector('.progress-text');
+        
+        progress.classList.remove('hidden');
+        progressFill.style.width = '0%';
+        progressText.textContent = 'Импортируем лоты...';
         
         try {
-            const collection = await API.get(`/collections/${id}`);
+            const result = await API.post(`/collections/${collectionId}/lots`, {
+                cian_urls: urls
+            });
             
-            document.getElementById('view-collection-title').textContent = collection.name;
-            document.getElementById('view-collection-description').textContent = 
-                collection.description || '';
+            progressFill.style.width = '100%';
+            progressText.textContent = `Импортировано: ${result.total_added} из ${urls.length}`;
             
-            // Публичная ссылка
-            const linkContainer = document.getElementById('public-link-container');
-            if (collection.public_slug) {
-                linkContainer.classList.remove('hidden');
-                document.getElementById('public-link-input').value = 
-                    window.location.origin + '/c/' + collection.public_slug;
-            } else {
-                linkContainer.classList.add('hidden');
+            if (result.errors && result.errors.length > 0) {
+                console.warn('Ошибки импорта:', result.errors);
             }
             
-            // Лоты
-            this.renderLots(collection.lots);
+            // Небольшая задержка чтобы показать результат
+            await new Promise(resolve => setTimeout(resolve, 800));
             
-            this.showModal('view-collection-modal');
         } catch (e) {
-            alert('Ошибка загрузки коллекции: ' + e.message);
+            throw e;
+        } finally {
+            progress.classList.add('hidden');
+            progressFill.style.width = '0';
         }
     },
     
     renderLots(lots) {
         const grid = document.getElementById('lots-list');
-        const empty = document.getElementById('lots-empty');
         
         if (!lots || lots.length === 0) {
-            grid.innerHTML = '';
-            empty.classList.remove('hidden');
+            grid.innerHTML = '<p class="lots-empty-text">Нет объектов</p>';
             return;
         }
         
-        empty.classList.add('hidden');
-        
         grid.innerHTML = lots.map(lot => `
-            <div class="lot-card" data-id="${lot.id}" style="position: relative;">
+            <div class="lot-card" data-id="${lot.id}">
                 <img src="${lot.layout_image_url || 'img/placeholder.png'}" 
                      alt="Планировка" class="lot-card-image"
                      onerror="this.src='img/placeholder.png'">
@@ -253,7 +339,10 @@ const Collections = {
     },
     
     async publishCollection() {
-        if (!this.currentCollectionId) return;
+        if (!this.currentCollectionId) {
+            alert('Сначала сохраните подборку');
+            return;
+        }
         
         try {
             const result = await API.post(`/collections/${this.currentCollectionId}/publish`);
@@ -286,7 +375,7 @@ const Collections = {
         }, 1500);
     },
     
-    // URL инпуты для добавления лотов
+    // URL инпуты
     resetUrlInputs() {
         const container = document.getElementById('url-inputs-container');
         container.innerHTML = `
@@ -321,65 +410,21 @@ const Collections = {
         row.querySelector('.url-input').focus();
     },
     
-    async importLots() {
-        const inputs = document.querySelectorAll('#url-inputs-container .url-input');
-        const urls = [];
-        
-        inputs.forEach(input => {
-            const url = input.value.trim();
-            if (url) {
-                urls.push(url);
-            }
-        });
-        
-        if (urls.length === 0) {
-            alert('Добавьте хотя бы одну ссылку');
-            return;
-        }
-        
-        const progress = document.getElementById('import-progress');
-        const progressFill = progress.querySelector('.progress-fill');
-        const progressText = progress.querySelector('.progress-text');
-        
-        progress.classList.remove('hidden');
-        document.getElementById('btn-import-lots').disabled = true;
-        
-        try {
-            const result = await API.post(`/collections/${this.currentCollectionId}/lots`, {
-                cian_urls: urls
-            });
-            
-            progressFill.style.width = '100%';
-            progressText.textContent = `Импортировано: ${result.total_added} из ${urls.length}`;
-            
-            if (result.errors && result.errors.length > 0) {
-                console.warn('Ошибки импорта:', result.errors);
-            }
-            
-            // Обновляем коллекцию
-            setTimeout(async () => {
-                this.hideModal('add-lots-modal');
-                progress.classList.add('hidden');
-                progressFill.style.width = '0';
-                document.getElementById('btn-import-lots').disabled = false;
-                
-                await this.openCollection(this.currentCollectionId);
-                await this.loadCollections();
-            }, 1000);
-            
-        } catch (e) {
-            alert('Ошибка импорта: ' + e.message);
-            progress.classList.add('hidden');
-            document.getElementById('btn-import-lots').disabled = false;
-        }
-    },
-    
     async removeLotFromCollection(lotId) {
         if (!confirm('Удалить лот из подборки?')) return;
         
         try {
             await API.delete(`/collections/${this.currentCollectionId}/lots/${lotId}`);
-            await this.openCollection(this.currentCollectionId);
+            
+            // Обновляем локальный список
+            this.currentLots = this.currentLots.filter(l => l.id !== lotId);
+            
+            if (this.currentLots.length > 0) {
+                this.renderLots(this.currentLots);
+            } else {
+                document.getElementById('existing-lots-section').classList.add('hidden');
+            }
+            
             await this.loadCollections();
         } catch (e) {
             alert('Ошибка удаления: ' + e.message);
@@ -387,8 +432,6 @@ const Collections = {
     },
     
     async openLotCalculator(lot) {
-        this.hideModal('view-collection-modal');
-        
         // Заполняем данные
         document.getElementById('lot-image').src = lot.layout_image_url || 'img/placeholder.png';
         document.getElementById('lot-address').textContent = lot.address;

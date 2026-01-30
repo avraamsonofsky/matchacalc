@@ -64,62 +64,28 @@
         </div>
     </div>
 
-    <!-- Модалка создания коллекции -->
-    <div id="create-collection-modal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Создать подборку</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <form id="create-collection-form">
-                <div class="form-group">
-                    <label for="collection-name">Название</label>
-                    <input type="text" id="collection-name" placeholder="Офисы Москва-Сити для инвестора" required>
-                </div>
-                <div class="form-group">
-                    <label for="collection-description">Описание (необязательно)</label>
-                    <textarea id="collection-description" placeholder="Подборка под стратегию 7+ лет..."></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary modal-cancel">Отмена</button>
-                    <button type="submit" class="btn-primary">Создать</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модалка просмотра коллекции -->
-    <div id="view-collection-modal" class="modal hidden">
+    <!-- Единая модалка создания/редактирования коллекции -->
+    <div id="collection-modal" class="modal hidden">
         <div class="modal-overlay"></div>
         <div class="modal-content modal-large">
             <div class="modal-header">
-                <h2 id="view-collection-title">Название подборки</h2>
+                <h2 id="modal-title">Новая подборка</h2>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p id="view-collection-description" class="collection-description"></p>
-                
-                <!-- Кнопки действий -->
-                <div class="collection-actions">
-                    <button id="btn-add-lots" class="btn-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        Добавить лоты
-                    </button>
-                    <button id="btn-publish-collection" class="btn-primary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                            <polyline points="16 6 12 2 8 6"></polyline>
-                            <line x1="12" y1="2" x2="12" y2="15"></line>
-                        </svg>
-                        Опубликовать
-                    </button>
+                <!-- Основная информация -->
+                <div class="collection-form-section">
+                    <div class="form-group">
+                        <label for="collection-name">Название</label>
+                        <input type="text" id="collection-name" placeholder="Офисы Москва-Сити для инвестора" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="collection-description">Описание (необязательно)</label>
+                        <textarea id="collection-description" placeholder="Подборка под стратегию 7+ лет..."></textarea>
+                    </div>
                 </div>
-                
-                <!-- Публичная ссылка -->
+
+                <!-- Публичная ссылка (только для существующих) -->
                 <div id="public-link-container" class="public-link-container hidden">
                     <label>Публичная ссылка:</label>
                     <div class="public-link-row">
@@ -132,42 +98,43 @@
                         </button>
                     </div>
                 </div>
-                
-                <!-- Список лотов -->
-                <div id="lots-list" class="lots-grid"></div>
-                
-                <!-- Пустое состояние для лотов -->
-                <div id="lots-empty" class="lots-empty hidden">
-                    <p>В этой подборке пока нет объектов</p>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Модалка добавления лотов -->
-    <div id="add-lots-modal" class="modal hidden">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Добавить лоты</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="modal-hint">Вставьте ссылки на объекты с Циан, Авито или Яндекс.Недвижимость (до 20 лотов в коллекции)</p>
-                <div id="url-inputs-container">
-                    <div class="url-input-row">
-                        <input type="url" class="url-input" placeholder="https://www.cian.ru/sale/commercial/...">
-                        <button type="button" class="btn-remove-url hidden">&times;</button>
+                <!-- Секция добавления лотов -->
+                <div class="add-lots-section">
+                    <h3>Добавить объекты</h3>
+                    <p class="section-hint">Вставьте ссылки с Циан, Авито или Яндекс.Недвижимость (до 20 лотов)</p>
+                    <div id="url-inputs-container">
+                        <div class="url-input-row">
+                            <input type="url" class="url-input" placeholder="https://www.cian.ru/sale/commercial/...">
+                            <button type="button" class="btn-remove-url hidden">&times;</button>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-add-more-url" class="btn-link">+ Добавить ещё ссылку</button>
+                    
+                    <div id="import-progress" class="import-progress hidden">
+                        <div class="progress-bar"><div class="progress-fill"></div></div>
+                        <p class="progress-text">Импортируем лоты...</p>
                     </div>
                 </div>
-                <button type="button" id="btn-add-more-url" class="btn-link">+ Добавить ещё ссылку</button>
+
+                <!-- Список существующих лотов -->
+                <div id="existing-lots-section" class="existing-lots-section hidden">
+                    <h3>Объекты в подборке</h3>
+                    <div id="lots-list" class="lots-grid"></div>
+                </div>
+
+                <!-- Кнопки действий -->
                 <div class="form-actions">
                     <button type="button" class="btn-secondary modal-cancel">Отмена</button>
-                    <button type="button" id="btn-import-lots" class="btn-primary">Импортировать</button>
-                </div>
-                <div id="import-progress" class="import-progress hidden">
-                    <div class="progress-bar"><div class="progress-fill"></div></div>
-                    <p class="progress-text">Импортируем лоты...</p>
+                    <button type="button" id="btn-publish-collection" class="btn-secondary hidden">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                        Опубликовать
+                    </button>
+                    <button type="button" id="btn-save-collection" class="btn-primary">Сохранить</button>
                 </div>
             </div>
         </div>
