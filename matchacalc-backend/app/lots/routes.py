@@ -162,9 +162,27 @@ async def parse_property_url(url: str) -> ParsedLotData:
     Использует универсальный парсер.
     """
     try:
-        # Импортируем парсер
+        # Импортируем парсер - проверяем разные пути
         import sys
-        sys.path.insert(0, '/home/nikit/realty_parser')
+        import os
+        
+        parser_paths = [
+            '/root/realty_parser',           # Сервер
+            '/home/nikit/realty_parser',     # Локальная разработка
+            os.path.join(os.path.dirname(__file__), '..', '..', 'realty_parser'),  # Относительный
+        ]
+        
+        parser_path = None
+        for path in parser_paths:
+            if os.path.exists(path):
+                parser_path = path
+                break
+        
+        if not parser_path:
+            print(f"Парсер не найден. Проверенные пути: {parser_paths}")
+            return ParsedLotData()
+        
+        sys.path.insert(0, parser_path)
         from universal_parser import parse_url as universal_parse
         
         result = universal_parse(url, method='playwright')
@@ -178,4 +196,6 @@ async def parse_property_url(url: str) -> ParsedLotData:
         )
     except Exception as e:
         print(f"Ошибка парсинга: {e}")
+        import traceback
+        traceback.print_exc()
         return ParsedLotData()
