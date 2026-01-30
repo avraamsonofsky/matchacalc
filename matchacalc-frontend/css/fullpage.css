@@ -3,13 +3,13 @@
 html {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    height: 100%;
+    height: auto;
     overscroll-behavior: none;
 }
 
 body {
     overflow-x: hidden;
-    height: 100%;
+    height: auto;
     overscroll-behavior-y: none;
 }
 

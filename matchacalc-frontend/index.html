@@ -384,11 +384,13 @@
     if (scrollToCalcBtn && calculatorSection) {
         const performScroll = () => {
             console.log('Performing scroll to calculator');
-            const targetPosition = calculatorSection.getBoundingClientRect().top + window.pageYOffset - 80;
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
+            const target = document.getElementById('calculator');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+                console.log('scrollIntoView called on #calculator');
+            } else {
+                console.error('#calculator not found during scroll attempt');
+            }
         };
 
         const handleEvent = (e) => {
