@@ -189,11 +189,20 @@ async def parse_property_url(url: str) -> ParsedLotData:
     # Скрипт для запуска парсера
     script = f'''
 import sys
-sys.path.insert(0, "{parser_path}")
+import os
 import json
-from universal_parser import parse_url
-result = parse_url("{url}", method="playwright")
-print(json.dumps(result))
+# Добавляем путь к парсеру в sys.path
+parser_dir = "{parser_path}"
+sys.path.insert(0, parser_dir)
+# Переходим в директорию парсера для корректного импорта внутренних модулей
+os.chdir(parser_dir)
+
+try:
+    from universal_parser import parse_url
+    result = parse_url("{url}", method="playwright")
+    print(json.dumps(result))
+except Exception as e:
+    print(json.dumps({{"error": str(e)}}))
 '''
     
     try:
