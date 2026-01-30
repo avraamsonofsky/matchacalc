@@ -185,7 +185,7 @@ async def parse_property_url(url: str) -> ParsedLotData:
         sys.path.insert(0, parser_path)
         from universal_parser import parse_url as universal_parse
         
-        result = universal_parse(url, method='playwright')
+        result = universal_parse(url, method='requests')
         
         return ParsedLotData(
             price=result.get('price'),
