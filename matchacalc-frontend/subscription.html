@@ -110,14 +110,21 @@
             // Показываем все кнопки "Оформить"
             document.getElementById('btn-subscribe-agent')?.classList.remove('hidden');
             
-            if (!user || !user.subscription) {
-                // Не авторизован или нет подписки
+            if (!user || !user.subscription || user.subscription.status !== 'ACTIVE') {
+                // Не авторизован или нет активной подписки
                 infoBlock?.classList.add('hidden');
                 document.getElementById('btn-current-none')?.classList.remove('hidden');
                 return;
             }
             
             const sub = user.subscription;
+            
+            // Если план NONE - это тоже "без подписки"
+            if (sub.plan === 'NONE') {
+                infoBlock?.classList.add('hidden');
+                document.getElementById('btn-current-none')?.classList.remove('hidden');
+                return;
+            }
             
             // Показываем блок информации
             infoBlock?.classList.remove('hidden');
@@ -126,10 +133,10 @@
             let planName = 'Без подписки';
             let currentPlanId = 'none';
             
-            if (sub.plan === 'agent') {
-                planName = 'Pro (Агент)';
+            if (sub.plan === 'AGENT' || sub.plan === 'PREMIUM') {
+                planName = 'Pro';
                 currentPlanId = 'agent';
-            } else if (sub.plan === 'developer') {
+            } else if (sub.plan === 'DEVELOPER') {
                 planName = 'Для застройщика';
                 currentPlanId = 'developer';
             }
