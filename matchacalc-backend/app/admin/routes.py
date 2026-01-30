@@ -299,7 +299,7 @@ def create_user(
     db.refresh(user)
     
     # Если указана подписка
-    if user_data.subscription_plan and user_data.subscription_plan != "none":
+    if user_data.subscription_plan and user_data.subscription_plan != "NONE":
         try:
             plan = SubscriptionPlan(user_data.subscription_plan)
         except ValueError:
