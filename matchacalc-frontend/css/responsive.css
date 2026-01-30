@@ -137,7 +137,7 @@
     }
     
     .hero-logo-img {
-        max-width: 120px;
+        max-width: 80px;
     }
     
     .hero-headline-modern {
@@ -383,11 +383,11 @@
 /* Маленькие мобильные (iPhone SE и т.п.) */
 @media (max-width: 375px) {
     .hero-logo-img {
-        max-width: 100px;
+        max-width: 70px;
     }
     
     .line-1, .line-2 {
-        font-size: 22px;
+        font-size: 20px;
         text-align: center;
     }
     

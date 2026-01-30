@@ -27,7 +27,7 @@
 }
 
 .hero-logo-img {
-    max-width: 180px;
+    max-width: 120px;
     height: auto;
 }
 
@@ -73,15 +73,29 @@
     font-size: 14px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: var(--transition);
+    transition: background-color 0.2s ease;
     border: none;
     border-radius: 50px;
     margin-top: var(--spacing-md);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    outline: none;
 }
 
 .hero-cta-modern:hover {
     background-color: var(--color-accent-dark);
-    transform: translateY(-2px);
+}
+
+.hero-cta-modern:focus {
+    outline: none;
+}
+
+.hero-cta-modern:active {
+    background-color: var(--color-accent-dark);
+    transform: scale(0.98);
 }
 
 @media (max-width: 968px) {
@@ -95,7 +109,7 @@
     }
     
     .hero-logo-img {
-        max-width: 140px;
+        max-width: 100px;
     }
 }
 
@@ -111,6 +125,6 @@
     }
     
     .hero-logo-img {
-        max-width: 220px;
+        max-width: 150px;
     }
 }

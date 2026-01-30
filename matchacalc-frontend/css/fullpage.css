@@ -1,16 +1,16 @@
 /* Full-page scroll styles */
 
 html {
-    overflow-y: scroll;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* Плавная прокрутка на iOS */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     height: 100%;
+    overscroll-behavior: none;
 }
 
 body {
     overflow-x: hidden;
     height: 100%;
-    touch-action: pan-y; /* Разрешаем вертикальную прокрутку touch */
+    overscroll-behavior-y: none;
 }
 
 .fullpage-container {
