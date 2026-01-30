@@ -303,7 +303,7 @@ def create_user(
         try:
             plan = SubscriptionPlan(user_data.subscription_plan)
         except ValueError:
-            plan = SubscriptionPlan.DEVELOPER  # По умолчанию premium = developer
+            plan = SubscriptionPlan.PREMIUM  # По умолчанию premium
         
         subscription = Subscription(
             user_id=user.id,

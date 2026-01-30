@@ -147,11 +147,11 @@ class UserCreate(BaseModel):
     email: str
     password: str
     role: str = "user"  # "user", "admin"
-    subscription_plan: Optional[str] = None  # "agent", "developer", None
+    subscription_plan: Optional[str] = None  # "agent", "developer", "premium", None
     subscription_expires_at: Optional[datetime] = None
 
 
 class UserUpdate(BaseModel):
     role: Optional[str] = None
-    subscription_plan: Optional[str] = None  # "agent", "developer", "none"
+    subscription_plan: Optional[str] = None  # "agent", "developer", "premium", "none"
     subscription_expires_at: Optional[datetime] = None
