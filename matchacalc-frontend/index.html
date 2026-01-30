@@ -386,16 +386,16 @@
             console.log('Performing scroll to calculator');
             const target = document.getElementById('calculator');
             if (target) {
-                // Используем scrollTo с расчетом смещения для идеального центрирования
+                // Прямой переход к элементу с учетом фиксированного навбара
+                // Мы хотим, чтобы верхняя граница секции была сразу под навбаром
                 const navbarHeight = 70;
-                const elementPosition = target.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20; // 20px запас сверху
+                const targetY = target.offsetTop - navbarHeight;
 
                 window.scrollTo({
-                    top: offsetPosition,
+                    top: targetY,
                     behavior: 'smooth'
                 });
-                console.log('Centered scroll to #calculator performed');
+                console.log('Scroll to Y:', targetY);
             } else {
                 console.error('#calculator not found during scroll attempt');
             }
