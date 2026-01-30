@@ -159,41 +159,66 @@ def map_district_to_location_group(district: str | None) -> str:
 async def parse_property_url(url: str) -> ParsedLotData:
     """
     Парсинг URL недвижимости.
-    Использует универсальный парсер.
+    Запускает парсер через subprocess чтобы обойти asyncio ограничения.
     """
+    import subprocess
+    import json
+    import os
+    
+    parser_paths = [
+        '/root/realty_parser',           # Сервер
+        '/home/nikit/realty_parser',     # Локальная разработка
+    ]
+    
+    parser_path = None
+    for path in parser_paths:
+        if os.path.exists(path):
+            parser_path = path
+            break
+    
+    if not parser_path:
+        print(f"Парсер не найден. Проверенные пути: {parser_paths}")
+        return ParsedLotData()
+    
+    # Определяем путь к Python в venv
+    venv_python = os.path.join(os.path.dirname(__file__), '..', '..', '.venv', 'bin', 'python')
+    if not os.path.exists(venv_python):
+        venv_python = 'python3'
+    
+    # Скрипт для запуска парсера
+    script = f'''
+import sys
+sys.path.insert(0, "{parser_path}")
+import json
+from universal_parser import parse_url
+result = parse_url("{url}", method="playwright")
+print(json.dumps(result))
+'''
+    
     try:
-        # Импортируем парсер - проверяем разные пути
-        import sys
-        import os
+        result = subprocess.run(
+            [venv_python, '-c', script],
+            capture_output=True,
+            text=True,
+            timeout=60
+        )
         
-        parser_paths = [
-            '/root/realty_parser',           # Сервер
-            '/home/nikit/realty_parser',     # Локальная разработка
-            os.path.join(os.path.dirname(__file__), '..', '..', 'realty_parser'),  # Относительный
-        ]
-        
-        parser_path = None
-        for path in parser_paths:
-            if os.path.exists(path):
-                parser_path = path
-                break
-        
-        if not parser_path:
-            print(f"Парсер не найден. Проверенные пути: {parser_paths}")
+        if result.returncode != 0:
+            print(f"Ошибка парсера: {result.stderr}")
             return ParsedLotData()
         
-        sys.path.insert(0, parser_path)
-        from universal_parser import parse_url as universal_parse
-        
-        result = universal_parse(url, method='requests')
+        data = json.loads(result.stdout.strip())
         
         return ParsedLotData(
-            price=result.get('price'),
-            area=result.get('area'),
-            district=result.get('district'),
-            year=result.get('year'),
-            address=result.get('address')
+            price=data.get('price'),
+            area=data.get('area'),
+            district=data.get('district'),
+            year=data.get('year'),
+            address=data.get('address')
         )
+    except subprocess.TimeoutExpired:
+        print("Таймаут парсинга (60 сек)")
+        return ParsedLotData()
     except Exception as e:
         print(f"Ошибка парсинга: {e}")
         import traceback
