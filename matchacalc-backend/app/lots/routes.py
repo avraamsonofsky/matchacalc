@@ -166,8 +166,9 @@ async def parse_property_url(url: str) -> ParsedLotData:
     import os
     
     parser_paths = [
-        '/root/realty_parser',           # Сервер
-        '/home/nikit/realty_parser',     # Локальная разработка
+        os.path.join(os.path.dirname(__file__), '..', '..', 'realty_parser'), # Внутри проекта (новое место)
+        '/root/realty_parser',           # Старый путь на сервере (для совместимости)
+        '/home/nikit/realty_parser',     # Старый путь локально
     ]
     
     parser_path = None

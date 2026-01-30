@@ -24,14 +24,14 @@ jobs:
             mkdir -p /root/matchacalc-backend-staging
             mkdir -p /var/www/staging
       
-      - name: Deploy backend code to VPS (staging)
+      - name: Deploy backend and parser code to VPS (staging)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
-          source: "matchacalc-backend/"
+          source: "matchacalc-backend/,realty_parser/"
           target: "/root/matchacalc-backend-staging/"
       
       - name: Deploy frontend code to VPS (staging)
