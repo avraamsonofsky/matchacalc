@@ -61,9 +61,11 @@
                         ПРОСТОЙ И ЧЕСТНЫЙ КАЛЬКУЛЯТОР ДЛЯ ОЦЕНКИ<br>
                         ИНВЕСТИЦИОННОЙ ПРИВЛЕКАТЕЛЬНОСТИ НЕДВИЖИМОСТИ
                     </p>
-                    <button type="button" class="hero-cta-modern" id="scroll-to-calc" style="appearance: none; -webkit-appearance: none; border: none; display: inline-flex; cursor: pointer; position: relative; z-index: 10000;">
-                        НАЧАТЬ РАСЧЁТ
-                    </button>
+                    <div class="hero-cta-wrapper" style="position: relative; z-index: 10000; margin-top: var(--spacing-md); display: flex; justify-content: center; width: 100%;">
+                        <button type="button" class="hero-cta-modern" id="scroll-to-calc" style="appearance: none; -webkit-appearance: none; border: none; display: inline-flex; cursor: pointer; position: relative; z-index: 10001; padding: 16px 48px; background-color: var(--color-accent); color: white; border-radius: 50px; font-weight: 500; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;">
+                            НАЧАТЬ РАСЧЁТ
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -376,25 +378,34 @@
         navRegister.parentElement.style.display = 'list-item';
     }
 
-    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору
     const scrollToCalcBtn = document.getElementById('scroll-to-calc');
     const calculatorSection = document.getElementById('calculator');
     
     if (scrollToCalcBtn && calculatorSection) {
-        const handleScroll = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Button clicked - starting scroll');
+        const performScroll = () => {
+            console.log('Performing scroll to calculator');
             const targetPosition = calculatorSection.getBoundingClientRect().top + window.pageYOffset - 80;
             window.scrollTo({
                 top: targetPosition,
                 behavior: 'smooth'
             });
         };
+
+        const handleEvent = (e) => {
+            console.log('Event triggered:', e.type);
+            e.preventDefault();
+            e.stopPropagation();
+            performScroll();
+        };
         
-        scrollToCalcBtn.addEventListener('click', handleScroll);
-        scrollToCalcBtn.addEventListener('touchstart', handleScroll, { passive: false });
-        console.log('Scroll events attached');
+        scrollToCalcBtn.addEventListener('click', handleEvent);
+        scrollToCalcBtn.addEventListener('touchstart', handleEvent, { passive: false });
+        // Дополнительно вешаем на обертку на случай проблем с попаданием
+        const wrapper = scrollToCalcBtn.parentElement;
+        if (wrapper) {
+            wrapper.addEventListener('click', handleEvent);
+        }
+        console.log('Scroll events attached to button and wrapper');
     }
 
     // Затем инициализируем Auth (проверка авторизации и обновление навигации)
