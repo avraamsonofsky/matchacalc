@@ -363,21 +363,37 @@
                 navMenu.style.display = 'flex';
             }
             
-            // Сразу показываем гостевую навигацию (до проверки авторизации)
-            // Это предотвратит мерцание
-            const navLogin = document.getElementById('nav-login');
-            const navRegister = document.getElementById('nav-register');
-            if (navLogin && navLogin.parentElement) {
-                navLogin.parentElement.classList.remove('hidden');
-                navLogin.parentElement.style.display = 'list-item';
-            }
-            if (navRegister && navRegister.parentElement) {
-                navRegister.parentElement.classList.remove('hidden');
-                navRegister.parentElement.style.display = 'list-item';
-            }
-            
-            // Затем инициализируем Auth (проверка авторизации и обновление навигации)
-            await Auth.init();
+    // Сразу показываем гостевую навигацию (до проверки авторизации)
+    // Это предотвратит мерцание
+    const navLogin = document.getElementById('nav-login');
+    const navRegister = document.getElementById('nav-register');
+    if (navLogin && navLogin.parentElement) {
+        navLogin.parentElement.classList.remove('hidden');
+        navLogin.parentElement.style.display = 'list-item';
+    }
+    if (navRegister && navRegister.parentElement) {
+        navRegister.parentElement.classList.remove('hidden');
+        navRegister.parentElement.style.display = 'list-item';
+    }
+
+    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору
+    const scrollToCalcBtn = document.getElementById('scroll-to-calc');
+    const calculatorSection = document.getElementById('calculator');
+    if (scrollToCalcBtn && calculatorSection) {
+        scrollToCalcBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const navbarHeight = 70;
+            const targetPosition = calculatorSection.getBoundingClientRect().top + window.scrollY - navbarHeight;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // Затем инициализируем Auth (проверка авторизации и обновление навигации)
+    await Auth.init();
             
             // Затем инициализируем AccessControl (использует данные из Auth)
             await AccessControl.init();
