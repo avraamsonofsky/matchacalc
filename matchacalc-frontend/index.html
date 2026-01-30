@@ -61,9 +61,9 @@
                         ПРОСТОЙ И ЧЕСТНЫЙ КАЛЬКУЛЯТОР ДЛЯ ОЦЕНКИ<br>
                         ИНВЕСТИЦИОННОЙ ПРИВЛЕКАТЕЛЬНОСТИ НЕДВИЖИМОСТИ
                     </p>
-                    <a href="#calculator" class="hero-cta-modern" id="scroll-to-calc" onclick="const target = document.getElementById('calculator'); if(target) { const y = target.getBoundingClientRect().top + window.pageYOffset - 80; window.scrollTo({top: y, behavior: 'smooth'}); console.log('Button clicked'); } return false;">
+                    <button type="button" class="hero-cta-modern" id="scroll-to-calc" style="appearance: none; -webkit-appearance: none; border: none; display: inline-flex; cursor: pointer; position: relative; z-index: 10000;">
                         НАЧАТЬ РАСЧЁТ
-                    </a>
+                    </button>
                 </div>
             </div>
         </section>
@@ -374,6 +374,27 @@
     if (navRegister && navRegister.parentElement) {
         navRegister.parentElement.classList.remove('hidden');
         navRegister.parentElement.style.display = 'list-item';
+    }
+
+    // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору
+    const scrollToCalcBtn = document.getElementById('scroll-to-calc');
+    const calculatorSection = document.getElementById('calculator');
+    
+    if (scrollToCalcBtn && calculatorSection) {
+        const handleScroll = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Button clicked - starting scroll');
+            const targetPosition = calculatorSection.getBoundingClientRect().top + window.pageYOffset - 80;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        };
+        
+        scrollToCalcBtn.addEventListener('click', handleScroll);
+        scrollToCalcBtn.addEventListener('touchstart', handleScroll, { passive: false });
+        console.log('Scroll events attached');
     }
 
     // Затем инициализируем Auth (проверка авторизации и обновление навигации)
