@@ -299,7 +299,7 @@ const Admin = {
                 <td>
                     <select data-field="type" onchange="Admin.toggleUserExpires(${user.id})">
                         <option value="user" ${userType === 'user' ? 'selected' : ''}>Обычный</option>
-                        <option value="premium" ${userType === 'premium' ? 'selected' : ''}>Premium</option>
+                        <option value="premium" ${userType === 'premium' ? 'selected' : ''}>Pro</option>
                         <option value="admin" ${userType === 'admin' ? 'selected' : ''}>Админ</option>
                     </select>
                 </td>
