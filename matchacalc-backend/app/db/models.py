@@ -8,23 +8,23 @@ from app.db.database import Base
 
 # Enums
 class UserRole(str, enum.Enum):
-    USER = "user"
-    AGENT = "agent"
-    DEVELOPER = "developer"
-    ADMIN = "admin"
+    USER = "USER"
+    AGENT = "AGENT"
+    DEVELOPER = "DEVELOPER"
+    ADMIN = "ADMIN"
 
 
 class SubscriptionPlan(str, enum.Enum):
-    NONE = "none"
-    AGENT = "agent"
-    DEVELOPER = "developer"
-    PREMIUM = "premium"
+    NONE = "NONE"
+    AGENT = "AGENT"
+    DEVELOPER = "DEVELOPER"
+    PREMIUM = "PREMIUM"
 
 
 class SubscriptionStatus(str, enum.Enum):
-    ACTIVE = "active"
-    CANCELLED = "cancelled"
-    EXPIRED = "expired"
+    ACTIVE = "ACTIVE"
+    CANCELLED = "CANCELLED"
+    EXPIRED = "EXPIRED"
 
 
 class PropertyClass(str, enum.Enum):
@@ -41,7 +41,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role = Column(SQLEnum(UserRole, values_callable=lambda x: [e.value for e in x]), default=UserRole.USER, nullable=False)
+    role = Column(SQLEnum(UserRole), default=UserRole.USER, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
@@ -56,10 +56,10 @@ class Subscription(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    plan = Column(SQLEnum(SubscriptionPlan, values_callable=lambda x: [e.value for e in x]), default=SubscriptionPlan.NONE, nullable=False)
+    plan = Column(SQLEnum(SubscriptionPlan), default=SubscriptionPlan.NONE, nullable=False)
     started_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True), nullable=True)
-    status = Column(SQLEnum(SubscriptionStatus, values_callable=lambda x: [e.value for e in x]), default=SubscriptionStatus.ACTIVE, nullable=False)
+    status = Column(SQLEnum(SubscriptionStatus), default=SubscriptionStatus.ACTIVE, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     # Relationships
