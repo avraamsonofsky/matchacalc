@@ -34,9 +34,12 @@ body {
 /* Калькулятор секция */
         .fullpage-section.calculator-section {
             background-color: var(--bg-primary);
-            padding-top: 40px;
-            padding-bottom: var(--spacing-md);
-            scroll-margin-top: 80px;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
 /* Заголовок секции */

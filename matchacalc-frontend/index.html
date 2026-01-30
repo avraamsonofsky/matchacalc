@@ -386,8 +386,16 @@
             console.log('Performing scroll to calculator');
             const target = document.getElementById('calculator');
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-                console.log('scrollIntoView called on #calculator');
+                // Используем scrollTo с расчетом смещения для идеального центрирования
+                const navbarHeight = 70;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20; // 20px запас сверху
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                console.log('Centered scroll to #calculator performed');
             } else {
                 console.error('#calculator not found during scroll attempt');
             }
