@@ -18,7 +18,6 @@ class SubscriptionPlan(str, enum.Enum):
     NONE = "NONE"
     AGENT = "AGENT"
     DEVELOPER = "DEVELOPER"
-    PREMIUM = "PREMIUM"
 
 
 class SubscriptionStatus(str, enum.Enum):

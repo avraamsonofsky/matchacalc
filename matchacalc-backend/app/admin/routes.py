@@ -303,7 +303,7 @@ def create_user(
         try:
             plan = SubscriptionPlan(user_data.subscription_plan)
         except ValueError:
-            plan = SubscriptionPlan.PREMIUM  # По умолчанию premium
+            plan = SubscriptionPlan.AGENT  # По умолчанию Pro
         
         subscription = Subscription(
             user_id=user.id,
@@ -351,7 +351,7 @@ def update_user(
             try:
                 plan = SubscriptionPlan(user_data.subscription_plan)
             except ValueError:
-                plan = SubscriptionPlan.DEVELOPER
+                plan = SubscriptionPlan.AGENT  # fallback на Pro
             
             if active_sub:
                 active_sub.plan = plan

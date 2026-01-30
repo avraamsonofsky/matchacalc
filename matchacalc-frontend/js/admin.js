@@ -289,7 +289,7 @@ const Admin = {
             // Определяем тип для select
             let userType = 'user';
             if (user.role === 'ADMIN') userType = 'admin';
-            else if (subPlan === 'DEVELOPER' || subPlan === 'AGENT' || subPlan === 'PREMIUM') userType = 'premium';
+            else if (subPlan === 'DEVELOPER' || subPlan === 'AGENT') userType = 'premium';
             
             const createdAt = new Date(user.created_at).toLocaleDateString('ru-RU');
             
@@ -355,7 +355,7 @@ const Admin = {
             email,
             password,
             role: type === 'admin' ? 'ADMIN' : 'USER',
-            subscription_plan: type === 'premium' ? 'PREMIUM' : null,
+            subscription_plan: type === 'premium' ? 'AGENT' : null,
             subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
         };
 
@@ -384,7 +384,7 @@ const Admin = {
 
         const payload = {
             role: type === 'admin' ? 'ADMIN' : 'USER',
-            subscription_plan: type === 'premium' ? 'PREMIUM' : 'NONE',
+            subscription_plan: type === 'premium' ? 'AGENT' : 'NONE',
             subscription_expires_at: type === 'premium' && expiresInput ? expiresInput + 'T23:59:59Z' : null
         };
 

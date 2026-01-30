@@ -63,7 +63,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             pass
         
         # Определяем лимит
-        if subscription_status == "AGENT" or subscription_status == "DEVELOPER" or subscription_status == "PREMIUM":
+        if subscription_status == "AGENT" or subscription_status == "DEVELOPER":
             limit_seconds = settings.RATE_LIMIT_SUBSCRIBER
             key_prefix = f"ratelimit:subscriber:{user_id}"
         elif user_id:
