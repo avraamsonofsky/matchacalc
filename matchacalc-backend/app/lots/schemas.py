@@ -15,7 +15,7 @@ class LotBase(BaseModel):
 
 
 class LotCreate(LotBase):
-    cian_url: str
+    cian_url: Optional[str] = None
 
 
 class LotFromUrl(BaseModel):

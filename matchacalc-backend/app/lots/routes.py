@@ -129,7 +129,7 @@ async def add_lot_manual(
         location_group_id=data.location_group_id,
         rve_date=data.rve_date,
         layout_image_url=data.layout_image_url,
-        cian_url=f"manual_{datetime.now().timestamp()}" # Заглушка для уникальности
+        cian_url=data.cian_url or f"manual_{datetime.now().timestamp()}"
     )
     
     db.add(lot)

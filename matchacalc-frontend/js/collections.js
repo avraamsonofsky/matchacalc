@@ -278,14 +278,15 @@ const Collections = {
                 layout_image_url = uploadRes.url;
             }
 
-            const lotData = {
-                address,
-                purchase_price: parseFloat(price),
-                area: parseFloat(area),
-                location_group_id: 'center_ttk', // По умолчанию
-                rve_date: new Date().toISOString(),
-                layout_image_url
-            };
+                const lotData = {
+                    address,
+                    purchase_price: parseFloat(price),
+                    area: parseFloat(area),
+                    location_group_id: 'center_ttk', // По умолчанию
+                    rve_date: new Date().toISOString(),
+                    layout_image_url,
+                    cian_url: `manual_${Date.now()}`
+                };
 
             await API.post(`/lots/${this.currentCollectionId}/lots-manual`, lotData);
             
