@@ -160,14 +160,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group-compact cian-group">
-                            <label for="cian-url">Ссылка из Циан</label>
-                            <div class="cian-input-wrapper" id="cian-wrapper">
-                                <input type="url" id="cian-url" name="cian-url" placeholder="https://www.cian.ru/..." disabled>
-                                <span class="info-icon" title="Доступно только по подписке">i</span>
-                            </div>
-                        </div>
-
                         <div class="form-row">
                             <div class="form-group-compact">
                                 <label for="location-group">Район Москвы</label>
@@ -421,25 +413,9 @@
     // Затем инициализируем Auth (проверка авторизации и обновление навигации)
     await Auth.init();
             
-            // Затем инициализируем AccessControl (использует данные из Auth)
+            // Управление доступом к функционалу (ранее здесь был Циан)
+            // AccessControl.init() по-прежнему нужен для других проверок
             await AccessControl.init();
-            
-            // Управление доступом к полю Циан
-            const cianInput = document.getElementById('cian-url');
-            const cianWrapper = document.getElementById('cian-wrapper');
-            
-            if (AccessControl.canUseCian()) {
-                if (cianInput) cianInput.disabled = false;
-                if (cianWrapper) cianWrapper.classList.remove('disabled');
-            } else {
-                if (cianInput) {
-                    cianInput.disabled = true;
-                    cianInput.addEventListener('focus', () => {
-                        AccessControl.showSubscriptionModal();
-                    });
-                }
-                if (cianWrapper) cianWrapper.classList.add('disabled');
-            }
             
             // Финальная проверка - убеждаемся, что навбар видим
             setTimeout(() => {

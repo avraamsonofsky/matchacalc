@@ -101,19 +101,31 @@
 
                 <!-- Секция добавления лотов -->
                 <div class="add-lots-section">
-                    <h3>Добавить объекты</h3>
-                    <p class="section-hint">Вставьте ссылки с Циан, Авито или Яндекс.Недвижимость (до 20 лотов)</p>
-                    <div id="url-inputs-container">
-                        <div class="url-input-row">
-                            <input type="url" class="url-input" placeholder="https://www.cian.ru/sale/commercial/...">
-                            <button type="button" class="btn-remove-url hidden">&times;</button>
+                    <h3>Добавить объект</h3>
+                    <div id="manual-lot-form" class="manual-lot-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Адрес</label>
+                                <input type="text" id="lot-address-input" placeholder="ул. Тагильская, вл. 4" required>
+                            </div>
                         </div>
-                    </div>
-                    <button type="button" id="btn-add-more-url" class="btn-link">+ Добавить ещё ссылку</button>
-                    
-                    <div id="import-progress" class="import-progress hidden">
-                        <div class="progress-bar"><div class="progress-fill"></div></div>
-                        <p class="progress-text">Импортируем лоты...</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Цена (₽)</label>
+                                <input type="number" id="lot-price-input" placeholder="50000000" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Площадь (м²)</label>
+                                <input type="number" id="lot-area-input" placeholder="150" required step="0.1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Планировка (изображение)</label>
+                                <input type="file" id="lot-image-input" accept="image/png, image/jpeg, image/jpg">
+                            </div>
+                        </div>
+                        <button type="button" id="btn-add-lot-manual" class="btn-secondary">Добавить в коллекцию</button>
                     </div>
                 </div>
 

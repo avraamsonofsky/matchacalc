@@ -52,21 +52,21 @@ const Collections = {
             });
         });
         
-        // Добавление URL инпутов
-        document.getElementById('btn-add-more-url')?.addEventListener('click', () => {
-            this.addUrlInput();
-        });
-        
         // Сохранение коллекции
         document.getElementById('btn-save-collection')?.addEventListener('click', async () => {
             await this.saveCollection();
+        });
+
+        // Ручное добавление лота
+        document.getElementById('btn-add-lot-manual')?.addEventListener('click', async () => {
+            await this.addLotManual();
         });
         
         // Публикация коллекции
         document.getElementById('btn-publish-collection')?.addEventListener('click', async () => {
             await this.publishCollection();
         });
-        
+
         // Копирование ссылки
         document.getElementById('btn-copy-link')?.addEventListener('click', () => {
             this.copyPublicLink();
@@ -81,7 +81,7 @@ const Collections = {
             await this.calculateLot();
         });
     },
-    
+
     async loadCollections() {
         try {
             this.collections = await API.get('/collections');
@@ -90,7 +90,7 @@ const Collections = {
             console.error('Ошибка загрузки коллекций:', e);
         }
     },
-    
+
     renderCollections() {
         const list = document.getElementById('collections-list');
         const emptyState = document.getElementById('empty-state');
@@ -129,7 +129,7 @@ const Collections = {
             });
         });
     },
-    
+
     // Открыть модалку (создание или редактирование)
     async openModal(collectionId = null) {
         this.currentCollectionId = collectionId;
@@ -143,12 +143,12 @@ const Collections = {
         const linkContainer = document.getElementById('public-link-container');
         const existingLotsSection = document.getElementById('existing-lots-section');
         
-        // Сбросить URL инпуты
-        this.resetUrlInputs();
+        // Сбросить форму лота
+        this.resetLotForm();
         
         if (collectionId) {
             // Редактирование существующей
-            title.textContent = 'Редактировать подборку';
+            title.textContent = 'Редактировать коллекцию';
             publishBtn.classList.remove('hidden');
             
             try {
@@ -179,7 +179,7 @@ const Collections = {
             }
         } else {
             // Создание новой
-            title.textContent = 'Новая подборка';
+            title.textContent = 'Новая коллекция';
             nameInput.value = '';
             descInput.value = '';
             publishBtn.classList.add('hidden');
@@ -190,14 +190,14 @@ const Collections = {
         modal.classList.remove('hidden');
         nameInput.focus();
     },
-    
-    // Сохранить коллекцию (создать или обновить) + импорт лотов
+
+    // Сохранить коллекцию (создать или обновить)
     async saveCollection() {
         const name = document.getElementById('collection-name').value.trim();
         const description = document.getElementById('collection-description').value.trim();
         
         if (!name) {
-            alert('Введите название подборки');
+            alert('Введите название коллекции');
             return;
         }
         
@@ -217,15 +217,6 @@ const Collections = {
                 });
                 collectionId = collection.id;
                 this.currentCollectionId = collectionId;
-            } else {
-                // Обновляем существующую (TODO: добавить API для обновления)
-                // Пока просто продолжаем
-            }
-            
-            // Импорт лотов
-            const urls = this.getUrls();
-            if (urls.length > 0) {
-                await this.importLots(collectionId, urls);
             }
             
             // Обновляем список и закрываем
@@ -239,55 +230,88 @@ const Collections = {
             saveBtn.textContent = 'Сохранить';
         }
     },
-    
-    // Получить URL из инпутов
-    getUrls() {
-        const inputs = document.querySelectorAll('#url-inputs-container .url-input');
-        const urls = [];
-        
-        inputs.forEach(input => {
-            const url = input.value.trim();
-            if (url) {
-                urls.push(url);
+
+    async addLotManual() {
+        if (!this.currentCollectionId) {
+            // Если коллекции еще нет, сначала создаем её
+            const name = document.getElementById('collection-name').value.trim();
+            if (!name) {
+                alert('Сначала введите название коллекции');
+                return;
             }
-        });
-        
-        return urls;
-    },
-    
-    // Импорт лотов
-    async importLots(collectionId, urls) {
-        const progress = document.getElementById('import-progress');
-        const progressFill = progress.querySelector('.progress-fill');
-        const progressText = progress.querySelector('.progress-text');
-        
-        progress.classList.remove('hidden');
-        progressFill.style.width = '0%';
-        progressText.textContent = 'Импортируем лоты...';
-        
+            try {
+                const collection = await API.post('/collections', {
+                    name,
+                    description: document.getElementById('collection-description').value.trim() || null
+                });
+                this.currentCollectionId = collection.id;
+                // Показываем секцию лотов
+                document.getElementById('existing-lots-section').classList.remove('hidden');
+            } catch (e) {
+                alert('Ошибка создания коллекции: ' + e.message);
+                return;
+            }
+        }
+
+        const address = document.getElementById('lot-address-input').value.trim();
+        const price = document.getElementById('lot-price-input').value;
+        const area = document.getElementById('lot-area-input').value;
+        const imageFile = document.getElementById('lot-image-input').files[0];
+
+        if (!address || !price || !area) {
+            alert('Заполните адрес, цену и площадь');
+            return;
+        }
+
+        const btn = document.getElementById('btn-add-lot-manual');
+        btn.disabled = true;
+        btn.textContent = 'Добавляем...';
+
         try {
-            const result = await API.post(`/collections/${collectionId}/lots`, {
-                cian_urls: urls
-            });
-            
-            progressFill.style.width = '100%';
-            progressText.textContent = `Импортировано: ${result.total_added} из ${urls.length}`;
-            
-            if (result.errors && result.errors.length > 0) {
-                console.warn('Ошибки импорта:', result.errors);
+            let layout_image_url = null;
+            if (imageFile) {
+                // Загрузка изображения
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                
+                const uploadRes = await API.uploadFile(formData);
+                layout_image_url = uploadRes.url;
             }
+
+            const lotData = {
+                address,
+                purchase_price: parseFloat(price),
+                area: parseFloat(area),
+                location_group_id: 'center_ttk', // По умолчанию
+                rve_date: new Date().toISOString(),
+                layout_image_url
+            };
+
+            await API.post(`/collections/${this.currentCollectionId}/lots-manual`, lotData);
             
-            // Небольшая задержка чтобы показать результат
-            await new Promise(resolve => setTimeout(resolve, 800));
-            
+            // Очищаем форму и обновляем список
+            this.resetLotForm();
+            const updatedCollection = await API.get(`/collections/${this.currentCollectionId}`);
+            this.currentLots = updatedCollection.lots || [];
+            this.renderLots(this.currentLots);
+            document.getElementById('existing-lots-section').classList.remove('hidden');
+            await this.loadCollections();
+
         } catch (e) {
-            throw e;
+            alert('Ошибка добавления лота: ' + e.message);
         } finally {
-            progress.classList.add('hidden');
-            progressFill.style.width = '0';
+            btn.disabled = false;
+            btn.textContent = 'Добавить в коллекцию';
         }
     },
-    
+
+    resetLotForm() {
+        document.getElementById('lot-address-input').value = '';
+        document.getElementById('lot-price-input').value = '';
+        document.getElementById('lot-area-input').value = '';
+        document.getElementById('lot-image-input').value = '';
+    },
+
     renderLots(lots) {
         const grid = document.getElementById('lots-list');
         

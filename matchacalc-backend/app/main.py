@@ -54,11 +54,16 @@ def health_check_v1():
 
 
 # Раздача статических файлов фронтенда (должно быть в конце, после всех API роутов)
-static_dir = Path(__file__).parent.parent / "static"
-if static_dir.exists():
-    # Раздача CSS, JS и других статических файлов
-    app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
-    app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
+    static_dir = Path(__file__).parent.parent / "static"
+    if static_dir.exists():
+        # Раздача CSS, JS и других статических файлов
+        app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
+        app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
+        
+        # Раздача загруженных изображений
+        uploads_dir = static_dir / "uploads"
+        uploads_dir.mkdir(parents=True, exist_ok=True)
+        app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
     
     # Catch-all для HTML файлов (SPA routing)
     @app.get("/{path:path}")

@@ -105,5 +105,22 @@ const API = {
     
     async getMe() {
         return this.get('/auth/me');
+    },
+
+    // Загрузка файла
+    async uploadFile(formData) {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`${this.baseURL}/lots/upload-image`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+        return response.json();
     }
 };

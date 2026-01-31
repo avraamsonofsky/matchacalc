@@ -1,8 +1,9 @@
 """API маршруты для лотов"""
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
+from pathlib import Path
 
 from app.db.database import get_db
 from app.db.models import Lot, User, Collection, CollectionLot, SubscriptionStatus
@@ -103,6 +104,72 @@ async def parse_url(
     return await parse_property_url(data.url)
 
 
+@router.post("/{collection_id}/lots-manual", response_model=LotResponse)
+async def add_lot_manual(
+    collection_id: int,
+    data: LotCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_subscription)
+):
+    """Ручное добавление лота в коллекцию"""
+    collection = db.query(Collection).filter(
+        Collection.id == collection_id,
+        Collection.owner_user_id == current_user.id
+    ).first()
+    
+    if not collection:
+        raise HTTPException(status_code=404, detail="Коллекция не найдена")
+
+    # Создаём лот
+    lot = Lot(
+        owner_user_id=current_user.id,
+        purchase_price=data.purchase_price,
+        area=data.area,
+        address=data.address,
+        location_group_id=data.location_group_id,
+        rve_date=data.rve_date,
+        layout_image_url=data.layout_image_url,
+        cian_url=f"manual_{datetime.now().timestamp()}" # Заглушка для уникальности
+    )
+    
+    db.add(lot)
+    db.commit()
+    db.refresh(lot)
+    
+    # Добавляем в коллекцию
+    add_lot_to_collection(db, collection_id, lot.id, current_user.id)
+    
+    return lot
+
+
+@router.post("/upload-image")
+async def upload_lot_image(
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_subscription)
+):
+    """Загрузка изображения планировки"""
+    import os
+    import uuid
+    
+    # Создаем папку для загрузок если нет
+    upload_dir = Path(__file__).parent.parent.parent / "static" / "uploads"
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Генерируем уникальное имя
+    file_ext = os.path.splitext(file.filename)[1]
+    if file_ext.lower() not in ['.png', '.jpg', '.jpeg']:
+        raise HTTPException(status_code=400, detail="Неподдерживаемый формат файла")
+        
+    file_name = f"{uuid.uuid4()}{file_ext}"
+    file_path = upload_dir / file_name
+    
+    with open(file_path, "wb") as buffer:
+        import shutil
+        shutil.copyfileobj(file.file, buffer)
+        
+    return {"url": f"/uploads/{file_name}"}
+
+
 def add_lot_to_collection(db: Session, collection_id: int, lot_id: int, user_id: int):
     """Добавить лот в коллекцию"""
     collection = db.query(Collection).filter(
@@ -158,79 +225,6 @@ def map_district_to_location_group(district: str | None) -> str:
 
 async def parse_property_url(url: str) -> ParsedLotData:
     """
-    Парсинг URL недвижимости.
-    Запускает парсер через subprocess чтобы обойти asyncio ограничения.
+    Парсинг URL недвижимости (ВРЕМЕННО ОТКЛЮЧЕНО).
     """
-    import subprocess
-    import json
-    import os
-    
-    parser_paths = [
-        os.path.join(os.path.dirname(__file__), '..', '..', 'realty_parser'), # Внутри проекта (новое место)
-        '/root/realty_parser',           # Старый путь на сервере (для совместимости)
-        '/home/nikit/realty_parser',     # Старый путь локально
-    ]
-    
-    parser_path = None
-    for path in parser_paths:
-        if os.path.exists(path):
-            parser_path = path
-            break
-    
-    if not parser_path:
-        print(f"Парсер не найден. Проверенные пути: {parser_paths}")
-        return ParsedLotData()
-    
-    # Определяем путь к Python в venv
-    venv_python = os.path.join(os.path.dirname(__file__), '..', '..', '.venv', 'bin', 'python')
-    if not os.path.exists(venv_python):
-        venv_python = 'python3'
-    
-    # Скрипт для запуска парсера
-    script = f'''
-import sys
-import os
-import json
-# Добавляем путь к парсеру в sys.path
-parser_dir = "{parser_path}"
-sys.path.insert(0, parser_dir)
-# Переходим в директорию парсера для корректного импорта внутренних модулей
-os.chdir(parser_dir)
-
-try:
-    from universal_parser import parse_url
-    result = parse_url("{url}", method="playwright")
-    print(json.dumps(result))
-except Exception as e:
-    print(json.dumps({{"error": str(e)}}))
-'''
-    
-    try:
-        result = subprocess.run(
-            [venv_python, '-c', script],
-            capture_output=True,
-            text=True,
-            timeout=60
-        )
-        
-        if result.returncode != 0:
-            print(f"Ошибка парсера: {result.stderr}")
-            return ParsedLotData()
-        
-        data = json.loads(result.stdout.strip())
-        
-        return ParsedLotData(
-            price=data.get('price'),
-            area=data.get('area'),
-            district=data.get('district'),
-            year=data.get('year'),
-            address=data.get('address')
-        )
-    except subprocess.TimeoutExpired:
-        print("Таймаут парсинга (60 сек)")
-        return ParsedLotData()
-    except Exception as e:
-        print(f"Ошибка парсинга: {e}")
-        import traceback
-        traceback.print_exc()
-        return ParsedLotData()
+    return ParsedLotData()
