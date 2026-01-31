@@ -74,6 +74,13 @@ def health_check_v1():
             from fastapi import HTTPException
             raise HTTPException(status_code=404)
         
+        # Специальная обработка для uploads
+        if path.startswith("uploads/"):
+            file_path = static_dir / path
+            if file_path.exists() and file_path.is_file():
+                return FileResponse(file_path)
+            raise HTTPException(status_code=404)
+        
         file_path = static_dir / path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)
