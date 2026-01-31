@@ -287,7 +287,7 @@ const Collections = {
                 layout_image_url
             };
 
-            await API.post(`/collections/${this.currentCollectionId}/lots-manual`, lotData);
+            await API.post(`/lots/${this.currentCollectionId}/lots-manual`, lotData);
             
             // Очищаем форму и обновляем список
             this.resetLotForm();
@@ -364,7 +364,7 @@ const Collections = {
     
     async publishCollection() {
         if (!this.currentCollectionId) {
-            alert('Сначала сохраните подборку');
+            alert('Сначала сохраните коллекцию');
             return;
         }
         
@@ -435,7 +435,7 @@ const Collections = {
     },
     
     async removeLotFromCollection(lotId) {
-        if (!confirm('Удалить лот из подборки?')) return;
+        if (!confirm('Удалить лот из коллекции?')) return;
         
         try {
             await API.delete(`/collections/${this.currentCollectionId}/lots/${lotId}`);

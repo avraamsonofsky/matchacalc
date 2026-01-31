@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои подборки - LatteCalc</title>
+    <title>Мои коллекции - LatteCalc</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,7 @@
                 <li><a href="login.html" id="nav-login">Вход</a></li>
                 <li><a href="register.html" id="nav-register">Регистрация</a></li>
                 <li><a href="subscription.html">Подписка</a></li>
-                <li><a href="collections.html" class="active">Подборки</a></li>
+                <li><a href="collections.html" class="active">Коллекции</a></li>
                 <li><a href="index.html">Калькулятор</a></li>
                 <li class="hidden"><a href="#" id="nav-profile">Профиль</a></li>
                 <li class="hidden"><a href="#" id="nav-logout">Выход</a></li>
@@ -34,29 +34,29 @@
     <div class="collections-container">
         <!-- Блок для неавторизованных / без подписки -->
         <div id="no-subscription-notice" class="notice-card hidden">
-            <h2>Подборки доступны по подписке</h2>
-            <p>Создавайте коллекции объектов, добавляйте лоты через ссылки с Циан и делитесь подборками с клиентами.</p>
+            <h2>Коллекции доступны по подписке</h2>
+            <p>Создавайте коллекции объектов, добавляйте лоты и делитесь коллекциями с клиентами.</p>
             <a href="subscription.html" class="btn-primary">Оформить подписку</a>
         </div>
 
         <!-- Основной контент для подписчиков -->
         <div id="collections-content" class="hidden">
             <div class="collections-header">
-                <h1>Мои подборки</h1>
+                <h1>Мои коллекции</h1>
                 <button id="btn-create-collection" class="btn-primary">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Создать подборку
+                    Создать коллекцию
                 </button>
             </div>
 
             <!-- Пустое состояние -->
             <div id="empty-state" class="empty-state hidden">
                 <div class="empty-icon">📁</div>
-                <h3>У вас пока нет подборок</h3>
-                <p>Создайте первую подборку, чтобы начать добавлять объекты недвижимости</p>
+                <h3>У вас пока нет коллекций</h3>
+                <p>Создайте первую коллекцию, чтобы начать добавлять объекты недвижимости</p>
             </div>
 
             <!-- Список коллекций -->
@@ -69,7 +69,7 @@
         <div class="modal-overlay"></div>
         <div class="modal-content modal-large">
             <div class="modal-header">
-                <h2 id="modal-title">Новая подборка</h2>
+                <h2 id="modal-title">Новая коллекция</h2>
                 <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
@@ -131,7 +131,7 @@
 
                 <!-- Список существующих лотов -->
                 <div id="existing-lots-section" class="existing-lots-section hidden">
-                    <h3>Объекты в подборке</h3>
+                    <h3>Объекты в коллекции</h3>
                     <div id="lots-list" class="lots-grid"></div>
                 </div>
 

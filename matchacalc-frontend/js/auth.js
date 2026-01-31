@@ -113,7 +113,7 @@ const Auth = {
             user.subscription.status === 'ACTIVE' && 
             user.subscription.plan !== 'NONE';
         
-        // Админы и подписчики имеют доступ к парсеру и подборкам
+        // Админы и подписчики имеют доступ к парсеру и коллекциям
         if (hasPaidSubscription || user.role === 'ADMIN') {
             if (navCollections) {
                 navCollections.classList.remove('hidden');
