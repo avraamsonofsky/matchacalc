@@ -296,7 +296,7 @@ const Collections = {
             this.currentLots = updatedCollection.lots || [];
             this.renderLots(this.currentLots);
             document.getElementById('existing-lots-section').classList.remove('hidden');
-            await this.loadCollections();
+            // await this.loadCollections(); // УДАЛЕНО: вызывало бесконечный цикл перерендеринга карточек на главной странице коллекций
 
         } catch (e) {
             alert('Ошибка добавления лота: ' + e.message);
