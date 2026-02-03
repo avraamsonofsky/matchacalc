@@ -457,7 +457,7 @@
             const reportSelect = document.getElementById('calc-report');
             if (reportSelect.options.length === 0) {
                 try {
-                    const res = await fetch(`${API_BASE}/reports`);
+                    const res = await fetch(`${API_BASE}/reports/`);
                     const reports = await res.json();
                     reportSelect.innerHTML = reports.map(r => 
                         `<option value="${r.id}">${r.provider} • ${r.period}</option>`
