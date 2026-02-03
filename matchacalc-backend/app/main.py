@@ -86,6 +86,11 @@ def health_check_v1():
             return FileResponse(file_path)
         
         # Для всех остальных путей отдаём index.html (SPA)
+        if path.startswith("c/"):
+            public_path = static_dir / "public_collection.html"
+            if public_path.exists():
+                return FileResponse(public_path)
+        
         index_path = static_dir / "index.html"
         if index_path.exists():
             return FileResponse(index_path)

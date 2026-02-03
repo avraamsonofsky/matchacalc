@@ -297,6 +297,9 @@ const Collections = {
             this.renderLots(this.currentLots);
             document.getElementById('existing-lots-section').classList.remove('hidden');
             // await this.loadCollections(); // УДАЛЕНО: вызывало бесконечный цикл перерендеринга карточек на главной странице коллекций
+            
+            // Сбрасываем input file, чтобы не было повторных отправок при моргании (если оно осталось)
+            document.getElementById('lot-image-input').value = '';
 
         } catch (e) {
             alert('Ошибка добавления лота: ' + e.message);
