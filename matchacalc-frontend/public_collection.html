@@ -186,15 +186,17 @@
             margin-bottom: 8px;
         }
         .lot-modal-meta {
-            display: flex;
-            gap: 16px;
             margin-bottom: 24px;
-            color: var(--color-secondary);
         }
         .lot-modal-price {
             font-size: 24px;
             font-weight: 600;
             color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+        .lot-modal-area {
+            color: var(--color-secondary);
+            font-size: 16px;
         }
         
         /* Калькулятор в модалке */
@@ -234,10 +236,41 @@
         .slider-group label {
             display: flex;
             justify-content: space-between;
+            font-size: 15px;
+        }
+        .slider-group .years-display {
+            font-size: 18px;
+            font-weight: 600;
         }
         .slider {
             width: 100%;
             margin-top: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: linear-gradient(to right, #2E5BF6 0%, #2E5BF6 var(--value-percent, 46%), #e0e0e0 var(--value-percent, 46%), #e0e0e0 100%);
+            border-radius: 3px;
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #2E5BF6;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #2E5BF6;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
         
         .btn-calculate {
@@ -271,6 +304,38 @@
         .result-label { color: var(--color-secondary); }
         .result-value { font-weight: 600; }
         .result-value.highlight { color: var(--color-accent); font-size: 18px; }
+        
+        /* Модалка для полноэкранного просмотра изображения */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.9);
+        }
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 36px;
+            cursor: pointer;
+        }
+        .lot-modal-image {
+            cursor: zoom-in;
+        }
     </style>
 </head>
 <body>
@@ -314,11 +379,11 @@
         <div class="modal-content">
             <button class="modal-close">&times;</button>
             
-            <img id="modal-image" src="" alt="" class="lot-modal-image">
+            <img id="modal-image" src="" alt="" class="lot-modal-image" title="Нажмите для увеличения">
             <div id="modal-address" class="lot-modal-address"></div>
             <div class="lot-modal-meta">
-                <span id="modal-price" class="lot-modal-price"></span>
-                <span id="modal-area"></span>
+                <div id="modal-price" class="lot-modal-price"></div>
+                <div id="modal-area" class="lot-modal-area"></div>
             </div>
             
             <div class="calc-section">
@@ -327,9 +392,9 @@
                 <div class="form-group slider-group">
                     <label>
                         <span>Срок владения</span>
-                        <span id="years-value">7 лет</span>
+                        <span id="years-value" class="years-display">7 лет</span>
                     </label>
-                    <input type="range" id="calc-years" class="slider" min="1" max="15" value="7">
+                    <input type="range" id="calc-years" class="slider" min="1" max="15" value="7" style="--value-percent: 46%;">
                 </div>
                 
                 <div class="form-row">
@@ -365,6 +430,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Модалка для полноэкранного просмотра изображения -->
+    <div id="image-modal" class="image-modal hidden">
+        <button class="image-modal-close">&times;</button>
+        <img id="fullscreen-image" src="" alt="Планировка">
     </div>
 
     <script>
@@ -468,6 +539,11 @@
             }
             
             document.getElementById('results').classList.add('hidden');
+            
+            // Инициализировать слайдер
+            const slider = document.getElementById('calc-years');
+            updateSlider(slider);
+            
             document.getElementById('lot-modal').classList.remove('hidden');
         }
 
@@ -479,10 +555,14 @@
             btn.textContent = 'Считаем...';
 
             try {
-                const res = await fetch(`${API_BASE}/calc/from-lot/${currentLot.id}`, {
+                // Используем /calc/preview с данными лота
+                const res = await fetch(`${API_BASE}/calc/preview`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        purchase_price: currentLot.original_price,
+                        area: currentLot.area,
+                        location_group_id: currentLot.location_group_id,
                         holding_years: parseInt(document.getElementById('calc-years').value),
                         scenario_id: document.getElementById('calc-scenario').value,
                         report_id: parseInt(document.getElementById('calc-report').value)
@@ -499,6 +579,7 @@
                 
                 document.getElementById('results').classList.remove('hidden');
             } catch (e) {
+                console.error('Calc error:', e);
                 alert('Ошибка расчёта');
             } finally {
                 btn.disabled = false;
@@ -531,19 +612,47 @@
             return d.innerHTML;
         }
 
+        // Обновить цвет слайдера
+        function updateSlider(slider) {
+            const min = slider.min || 1;
+            const max = slider.max || 15;
+            const val = slider.value;
+            const percent = ((val - min) / (max - min)) * 100;
+            slider.style.setProperty('--value-percent', percent + '%');
+        }
+
+        // Открыть изображение в полноэкранном режиме
+        function openImageModal(src) {
+            if (!src || src.includes('data:image')) return; // Не открываем placeholder
+            document.getElementById('fullscreen-image').src = src;
+            document.getElementById('image-modal').classList.remove('hidden');
+        }
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', init);
 
         document.getElementById('calc-years').addEventListener('input', function() {
             document.getElementById('years-value').textContent = this.value + ' лет';
+            updateSlider(this);
         });
 
         document.getElementById('btn-calculate').addEventListener('click', calculate);
 
-        document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+        // Закрытие модалки лота
+        document.querySelectorAll('#lot-modal .modal-close, #lot-modal .modal-overlay').forEach(el => {
             el.addEventListener('click', () => {
                 document.getElementById('lot-modal').classList.add('hidden');
             });
+        });
+
+        // Клик на изображение в модалке - открыть полноэкранный просмотр
+        document.getElementById('modal-image').addEventListener('click', function() {
+            openImageModal(this.src);
+        });
+
+        // Закрытие модалки изображения
+        document.getElementById('image-modal').addEventListener('click', () => {
+            document.getElementById('image-modal').classList.add('hidden');
         });
     </script>
 </body>
