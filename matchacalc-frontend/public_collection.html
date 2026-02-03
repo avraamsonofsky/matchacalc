@@ -7,297 +7,544 @@
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=Arizonia&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/variables.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/typography.css">
-    <link rel="stylesheet" href="/css/collections.css">
-    <link rel="stylesheet" href="/css/forms-modern.css">
-    <link rel="stylesheet" href="/css/results-modern.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Arizonia&display=swap" rel="stylesheet">
     <style>
-        .public-container {
+        :root {
+            --color-primary: #1a1a1a;
+            --color-secondary: #666;
+            --color-accent: #4361ee;
+            --color-bg: #fafafa;
+            --color-card: #fff;
+            --color-border: #e5e5e5;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-logo: 'Arizonia', cursive;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg);
+            color: var(--color-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        
+        /* Шапка - только логотип */
+        .header {
+            background: var(--color-card);
+            border-bottom: 1px solid var(--color-border);
+            padding: 16px 24px;
+            text-align: center;
+        }
+        .logo {
+            font-family: var(--font-logo);
+            font-size: 32px;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        .logo:hover { opacity: 0.8; }
+        
+        /* Контент */
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: var(--spacing-xl) var(--spacing-md);
+            padding: 40px 24px;
         }
-        .public-header {
+        
+        .collection-header {
             text-align: center;
-            margin-bottom: var(--spacing-xxl);
+            margin-bottom: 40px;
         }
-        .public-header h1 {
-            font-size: 32px;
-            margin-bottom: var(--spacing-sm);
+        .collection-header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
-        .public-header p {
-            color: var(--color-text-secondary);
-            font-size: 18px;
+        .collection-header p {
+            color: var(--color-secondary);
+            font-size: 16px;
         }
+        
+        /* Сетка лотов */
         .lots-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
         }
-        /* Убираем кнопку удаления в публичном виде */
-        .lot-card-remove {
-            display: none !important;
+        
+        .lot-card {
+            background: var(--color-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .navbar-public {
+        .lot-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .lot-card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .lot-card-info {
+            padding: 16px;
+        }
+        .lot-card-address {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .lot-card-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-accent);
+            margin-bottom: 4px;
+        }
+        .lot-card-area {
+            color: var(--color-secondary);
+            font-size: 14px;
+        }
+        
+        /* Состояния */
+        .loading, .error, .empty {
+            text-align: center;
+            padding: 80px 24px;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--color-border);
+            border-top-color: var(--color-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .error-icon { font-size: 48px; margin-bottom: 16px; }
+        
+        .hidden { display: none !important; }
+        
+        /* Модалка */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
-        .navbar-public .logo {
-            font-size: 32px;
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
         }
+        .modal-content {
+            position: relative;
+            background: var(--color-card);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-secondary);
+        }
+        
+        .lot-modal-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .lot-modal-address {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .lot-modal-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            color: var(--color-secondary);
+        }
+        .lot-modal-price {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+        
+        /* Калькулятор в модалке */
+        .calc-section {
+            border-top: 1px solid var(--color-border);
+            padding-top: 24px;
+            margin-top: 24px;
+        }
+        .calc-section h3 {
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--color-secondary);
+            margin-bottom: 6px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+        }
+        .slider {
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .btn-calculate {
+            width: 100%;
+            padding: 14px;
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .btn-calculate:hover { opacity: 0.9; }
+        .btn-calculate:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .results {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .result-row:last-child { border-bottom: none; }
+        .result-label { color: var(--color-secondary); }
+        .result-value { font-weight: 600; }
+        .result-value.highlight { color: var(--color-accent); font-size: 18px; }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container navbar-public">
-            <a href="/" class="logo">LatteCalc</a>
-        </div>
-    </nav>
+    <!-- Шапка - только логотип -->
+    <header class="header">
+        <a href="/" class="logo">LatteCalc</a>
+    </header>
 
-    <div class="public-container">
-        <div id="loading" class="empty-state">
+    <div class="container">
+        <!-- Загрузка -->
+        <div id="loading" class="loading">
             <div class="loading-spinner"></div>
             <p>Загрузка коллекции...</p>
         </div>
 
+        <!-- Контент -->
         <div id="content" class="hidden">
-            <div class="public-header">
+            <div class="collection-header">
                 <h1 id="collection-title"></h1>
                 <p id="collection-description"></p>
             </div>
-
-            <div id="lots-grid" class="lots-grid">
-                <!-- Лоты будут здесь -->
-            </div>
+            <div id="lots-grid" class="lots-grid"></div>
         </div>
 
-        <div id="error" class="empty-state hidden">
-            <div class="empty-icon">⚠️</div>
+        <!-- Ошибка -->
+        <div id="error" class="error hidden">
+            <div class="error-icon">⚠️</div>
             <h3>Коллекция не найдена</h3>
             <p>Возможно, ссылка неверна или коллекция была удалена.</p>
-            <a href="/" class="btn-primary" style="margin-top: 20px;">На главную</a>
+        </div>
+
+        <!-- Пусто -->
+        <div id="empty" class="empty hidden">
+            <p>В этой коллекции пока нет объектов</p>
         </div>
     </div>
 
-    <!-- Модалка калькулятора (такая же как в основной части, но только для просмотра) -->
-    <div id="lot-calculator-modal" class="modal hidden">
+    <!-- Модалка лота -->
+    <div id="lot-modal" class="modal hidden">
         <div class="modal-overlay"></div>
-        <div class="modal-content calculator-modal-content">
+        <div class="modal-content">
             <button class="modal-close">&times;</button>
             
-            <div class="lot-calculator-layout">
-                <div class="lot-info-side">
-                    <img id="lot-image" src="" alt="Планировка" class="lot-calc-image">
-                    <div class="lot-calc-details">
-                        <h3 id="lot-address"></h3>
-                        <div class="lot-calc-price-area">
-                            <span id="lot-price" class="price"></span>
-                            <span class="divider">|</span>
-                            <span id="lot-area"></span> м²
-                        </div>
+            <img id="modal-image" src="" alt="" class="lot-modal-image">
+            <div id="modal-address" class="lot-modal-address"></div>
+            <div class="lot-modal-meta">
+                <span id="modal-price" class="lot-modal-price"></span>
+                <span id="modal-area"></span>
+            </div>
+            
+            <div class="calc-section">
+                <h3>Рассчитать доходность</h3>
+                
+                <div class="form-group slider-group">
+                    <label>
+                        <span>Срок владения</span>
+                        <span id="years-value">7 лет</span>
+                    </label>
+                    <input type="range" id="calc-years" class="slider" min="1" max="15" value="7">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Прогноз</label>
+                        <select id="calc-scenario">
+                            <option value="base">Базовый</option>
+                            <option value="pes">Пессимистичный</option>
+                            <option value="opt">Оптимистичный</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Отчёт</label>
+                        <select id="calc-report"></select>
                     </div>
                 </div>
                 
-                <div class="lot-calc-side">
-                    <div class="form-group-compact">
-                        <label>Срок владения: <span id="lot-years-value">7 лет</span></label>
-                        <input type="range" id="lot-years" min="1" max="15" value="7" class="slider-modern">
+                <button id="btn-calculate" class="btn-calculate">Рассчитать</button>
+                
+                <div id="results" class="results hidden">
+                    <div class="result-row">
+                        <span class="result-label">Окупаемость</span>
+                        <span id="res-payback" class="result-value"></span>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group-compact">
-                            <label>Прогноз</label>
-                            <select id="lot-scenario">
-                                <option value="base">Базовый</option>
-                                <option value="pes">Пессимистичный</option>
-                                <option value="opt">Оптимистичный</option>
-                            </select>
-                        </div>
-                        <div class="form-group-compact">
-                            <label>Отчёт</label>
-                            <select id="lot-report">
-                                <!-- Заполнится из API -->
-                            </select>
-                        </div>
+                    <div class="result-row">
+                        <span class="result-label">Совокупная прибыль</span>
+                        <span id="res-profit" class="result-value highlight"></span>
                     </div>
-                    
-                    <button id="btn-calc-lot" class="btn-calculate-compact">Рассчитать доходность</button>
-                    
-                    <div id="lot-results" class="lot-results-container hidden">
-                        <!-- Результаты здесь -->
+                    <div class="result-row">
+                        <span class="result-label">IRR</span>
+                        <span id="res-irr" class="result-value"></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="/js/api.js"></script>
-    <script src="/js/utils.js"></script>
     <script>
-        const PublicCollection = {
-            slug: window.location.pathname.split('/').pop(),
-            lots: [],
+        // Placeholder как data URI (чтобы избежать бесконечного цикла загрузки)
+        const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200">' +
+            '<rect fill="#f5f5f5" width="300" height="200"/>' +
+            '<text x="150" y="100" text-anchor="middle" fill="#999" font-family="sans-serif" font-size="14">Нет фото</text>' +
+            '</svg>'
+        );
 
-            async init() {
-                if (!this.slug) {
-                    this.showError();
-                    return;
+        const API_BASE = '/api/v1';
+        let currentLot = null;
+        let lots = [];
+
+        // Получить slug из URL
+        const slug = window.location.pathname.split('/').pop();
+
+        async function init() {
+            if (!slug) {
+                showError();
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/collections/public/${slug}`);
+                if (!res.ok) throw new Error('Not found');
+                const data = await res.json();
+                renderCollection(data);
+            } catch (e) {
+                showError();
+            }
+        }
+
+        function renderCollection(data) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+
+            document.getElementById('collection-title').textContent = data.title;
+            document.getElementById('collection-description').textContent = data.description || '';
+            document.title = data.title + ' - LatteCalc';
+
+            lots = data.lots || [];
+            
+            if (lots.length === 0) {
+                document.getElementById('content').classList.add('hidden');
+                document.getElementById('empty').classList.remove('hidden');
+                return;
+            }
+
+            const grid = document.getElementById('lots-grid');
+            grid.innerHTML = lots.map(lot => `
+                <div class="lot-card" data-id="${lot.id}">
+                    <img src="${lot.layout_image_url || PLACEHOLDER}" 
+                         alt="" class="lot-card-image"
+                         onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='${PLACEHOLDER}';}">
+                    <div class="lot-card-info">
+                        <div class="lot-card-address">${escapeHtml(lot.address)}</div>
+                        <div class="lot-card-price">${formatPrice(lot.original_price)}</div>
+                        <div class="lot-card-area">${lot.area} м²</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Обработчики кликов на карточки
+            grid.querySelectorAll('.lot-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const lotId = parseInt(card.dataset.id);
+                    const lot = lots.find(l => l.id === lotId);
+                    if (lot) openModal(lot);
+                });
+            });
+        }
+
+        async function openModal(lot) {
+            currentLot = lot;
+            
+            document.getElementById('modal-image').src = lot.layout_image_url || PLACEHOLDER;
+            document.getElementById('modal-image').onerror = function() {
+                if (!this.dataset.fallback) {
+                    this.dataset.fallback = '1';
+                    this.src = PLACEHOLDER;
                 }
-
+            };
+            document.getElementById('modal-address').textContent = lot.address;
+            document.getElementById('modal-price').textContent = formatPrice(lot.original_price);
+            document.getElementById('modal-area').textContent = lot.area + ' м²';
+            
+            // Загружаем отчеты если еще не загружены
+            const reportSelect = document.getElementById('calc-report');
+            if (reportSelect.options.length === 0) {
                 try {
-                    const data = await API.get(`/collections/public/${this.slug}`);
-                    this.renderCollection(data);
+                    const res = await fetch(`${API_BASE}/reports`);
+                    const reports = await res.json();
+                    reportSelect.innerHTML = reports.map(r => 
+                        `<option value="${r.id}">${r.provider} • ${r.period}</option>`
+                    ).join('');
                 } catch (e) {
                     console.error(e);
-                    this.showError();
                 }
+            }
+            
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('lot-modal').classList.remove('hidden');
+        }
 
-                this.setupEventListeners();
-            },
+        async function calculate() {
+            if (!currentLot) return;
+            
+            const btn = document.getElementById('btn-calculate');
+            btn.disabled = true;
+            btn.textContent = 'Считаем...';
 
-            renderCollection(data) {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('content').classList.remove('hidden');
-
-                document.getElementById('collection-title').textContent = data.title;
-                document.getElementById('collection-description').textContent = data.description || '';
-
-                this.lots = data.lots;
-                const grid = document.getElementById('lots-grid');
-                
-                if (this.lots.length === 0) {
-                    grid.innerHTML = '<p class="empty-text">В этой коллекции пока нет объектов</p>';
-                    return;
-                }
-
-                grid.innerHTML = this.lots.map(lot => `
-                    <div class="lot-card" data-id="${lot.id}">
-                        <img src="${lot.layout_image_url || '/img/placeholder.png'}" 
-                             alt="Планировка" class="lot-card-image"
-                             onerror="this.src='/img/placeholder.png'">
-                        <div class="lot-card-info">
-                            <div class="lot-card-address">${this.escapeHtml(lot.address)}</div>
-                            <div class="lot-card-price">
-                                ${lot.discounted_price ? `
-                                    <span class="lot-card-price-old">${this.formatPrice(lot.original_price)}</span>
-                                    ${this.formatPrice(lot.discounted_price)}
-                                ` : this.formatPrice(lot.original_price)}
-                            </div>
-                            <div class="lot-card-area">${lot.area} м²</div>
-                        </div>
-                    </div>
-                `).join('');
-
-                grid.querySelectorAll('.lot-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                        const lotId = parseInt(card.dataset.id);
-                        const lot = this.lots.find(l => l.id === lotId);
-                        if (lot) this.openCalculator(lot);
-                    });
+            try {
+                const res = await fetch(`${API_BASE}/calc/from-lot/${currentLot.id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        holding_years: parseInt(document.getElementById('calc-years').value),
+                        scenario_id: document.getElementById('calc-scenario').value,
+                        report_id: parseInt(document.getElementById('calc-report').value)
+                    })
                 });
-            },
-
-            async openCalculator(lot) {
-                const modal = document.getElementById('lot-calculator-modal');
-                document.getElementById('lot-image').src = lot.layout_image_url || '/img/placeholder.png';
-                document.getElementById('lot-address').textContent = lot.address;
-                document.getElementById('lot-price').textContent = this.formatPrice(lot.discounted_price || lot.original_price);
-                document.getElementById('lot-area').textContent = lot.area;
                 
-                // Загружаем отчеты если еще не загружены
-                const reportSelect = document.getElementById('lot-report');
-                if (reportSelect.options.length === 0) {
-                    try {
-                        const reports = await API.get('/reports');
-                        reportSelect.innerHTML = reports.map(r => 
-                            `<option value="${r.id}">${r.provider} • ${r.period}</option>`
-                        ).join('');
-                    } catch (e) { console.error(e); }
-                }
-
-                modal.dataset.lotId = lot.id;
-                document.getElementById('lot-results').classList.add('hidden');
-                modal.classList.remove('hidden');
-            },
-
-            async calculate() {
-                const modal = document.getElementById('lot-calculator-modal');
-                const lotId = modal.dataset.lotId;
-                const btn = document.getElementById('btn-calc-lot');
+                if (!res.ok) throw new Error('Calculation failed');
+                const result = await res.json();
                 
-                const data = {
-                    holding_years: parseInt(document.getElementById('lot-years').value),
-                    scenario_id: document.getElementById('lot-scenario').value,
-                    report_id: parseInt(document.getElementById('lot-report').value)
-                };
+                document.getElementById('res-payback').textContent = formatYears(result.static_metrics.payback_rent_and_sale_years);
+                document.getElementById('res-profit').textContent = formatPrice(result.dynamic_metrics.total_profit) + 
+                    ` (+${result.dynamic_metrics.total_profit_percent.toFixed(1)}%)`;
+                document.getElementById('res-irr').textContent = result.dynamic_metrics.irr_percent.toFixed(2) + '%';
+                
+                document.getElementById('results').classList.remove('hidden');
+            } catch (e) {
+                alert('Ошибка расчёта');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Рассчитать';
+            }
+        }
 
-                btn.disabled = true;
-                btn.textContent = 'Считаем...';
+        function showError() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+        }
 
-                try {
-                    const result = await API.post(`/calc/from-lot/${lotId}`, data);
-                    this.showResults(result);
-                } catch (e) {
-                    alert('Ошибка расчета: ' + e.message);
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = 'Рассчитать доходность';
-                }
-            },
+        function formatPrice(v) {
+            return new Intl.NumberFormat('ru-RU', { 
+                style: 'currency', 
+                currency: 'RUB', 
+                maximumFractionDigits: 0 
+            }).format(v);
+        }
 
-            showResults(result) {
-                const container = document.getElementById('lot-results');
-                container.innerHTML = `
-                    <div class="results-grid" style="margin-top: 20px; border-top: 1px solid var(--color-border); padding-top: 20px;">
-                        <div class="result-item">
-                            <span class="result-label">Окупаемость (аренда+продажа)</span>
-                            <span class="result-value">${this.formatYears(result.static_metrics.payback_rent_and_sale_years)}</span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">Совокупная прибыль</span>
-                            <span class="result-value highlight">${this.formatPrice(result.dynamic_metrics.total_profit)}
-                                <small>(+${result.dynamic_metrics.total_profit_percent.toFixed(1)}%)</small>
-                            </span>
-                        </div>
-                        <div class="result-item">
-                            <span class="result-label">IRR</span>
-                            <span class="result-value">${result.dynamic_metrics.irr_percent.toFixed(2)}%</span>
-                        </div>
-                    </div>
-                `;
-                container.classList.remove('hidden');
-            },
+        function formatYears(y) {
+            const years = Math.floor(y);
+            const months = Math.round((y - years) * 12);
+            return months > 0 ? `${years} лет ${months} мес` : `${years} лет`;
+        }
 
-            setupEventListeners() {
-                document.getElementById('btn-calc-lot').addEventListener('click', () => this.calculate());
-                document.getElementById('lot-years').addEventListener('input', (e) => {
-                    document.getElementById('lot-years-value').textContent = e.target.value + ' лет';
-                });
-                document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
-                    el.addEventListener('click', () => {
-                        document.getElementById('lot-calculator-modal').classList.add('hidden');
-                    });
-                });
-            },
+        function escapeHtml(t) {
+            const d = document.createElement('div');
+            d.textContent = t;
+            return d.innerHTML;
+        }
 
-            showError() {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error').classList.remove('hidden');
-            },
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', init);
 
-            formatPrice(v) { return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(v); },
-            formatYears(y) { 
-                const years = Math.floor(y);
-                const months = Math.round((y - years) * 12);
-                return months > 0 ? `${years} лет ${months} мес` : `${years} лет`;
-            },
-            escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-        };
+        document.getElementById('calc-years').addEventListener('input', function() {
+            document.getElementById('years-value').textContent = this.value + ' лет';
+        });
 
-        document.addEventListener('DOMContentLoaded', () => PublicCollection.init());
+        document.getElementById('btn-calculate').addEventListener('click', calculate);
+
+        document.querySelectorAll('.modal-close, .modal-overlay').forEach(el => {
+            el.addEventListener('click', () => {
+                document.getElementById('lot-modal').classList.add('hidden');
+            });
+        });
     </script>
 </body>
 </html>

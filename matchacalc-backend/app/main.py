@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -53,47 +53,57 @@ def health_check_v1():
     return {"status": "ok"}
 
 
-# Раздача статических файлов фронтенда (должно быть в конце, после всех API роутов)
-    static_dir = Path(__file__).parent.parent / "static"
-    if static_dir.exists():
-        # Раздача CSS, JS и других статических файлов
-        app.mount("/css", StaticFiles(directory=str(static_dir / "css")), name="css")
-        app.mount("/js", StaticFiles(directory=str(static_dir / "js")), name="js")
-        
-        # Раздача загруженных изображений
-        uploads_dir = static_dir / "uploads"
-        uploads_dir.mkdir(parents=True, exist_ok=True)
-        app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+# Раздача статических файлов фронтенда
+static_dir = Path(__file__).parent.parent / "static"
+if static_dir.exists():
+    # Раздача CSS, JS и других статических файлов
+    css_dir = static_dir / "css"
+    js_dir = static_dir / "js"
+    img_dir = static_dir / "img"
+    uploads_dir = static_dir / "uploads"
     
-    # Catch-all для HTML файлов (SPA routing)
-    @app.get("/{path:path}")
-    async def serve_frontend(path: str):
-        """Раздача фронтенда для всех путей, кроме API"""
-        # Если путь начинается с api/, не обрабатываем (должен вернуть 404 от FastAPI)
-        if path.startswith("api/"):
-            from fastapi import HTTPException
-            raise HTTPException(status_code=404)
-        
-        # Специальная обработка для uploads
-        if path.startswith("uploads/"):
-            file_path = static_dir / path
-            if file_path.exists() and file_path.is_file():
-                return FileResponse(file_path)
-            raise HTTPException(status_code=404)
-        
+    if css_dir.exists():
+        app.mount("/css", StaticFiles(directory=str(css_dir)), name="css")
+    if js_dir.exists():
+        app.mount("/js", StaticFiles(directory=str(js_dir)), name="js")
+    if img_dir.exists():
+        app.mount("/img", StaticFiles(directory=str(img_dir)), name="img")
+    
+    # Раздача загруженных изображений
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
+
+# Catch-all для HTML файлов (SPA routing) - должен быть в конце
+@app.get("/{path:path}")
+async def serve_frontend(path: str):
+    """Раздача фронтенда для всех путей, кроме API"""
+    # Если путь начинается с api/, не обрабатываем
+    if path.startswith("api/"):
+        raise HTTPException(status_code=404)
+    
+    # Публичные коллекции - отдельная страница
+    if path.startswith("c/"):
+        public_path = static_dir / "public_collection.html"
+        if public_path.exists():
+            return FileResponse(public_path)
+        raise HTTPException(status_code=404, detail="Public collection page not found")
+    
+    # Специальная обработка для uploads
+    if path.startswith("uploads/"):
         file_path = static_dir / path
         if file_path.exists() and file_path.is_file():
             return FileResponse(file_path)
-        
-        # Для всех остальных путей отдаём index.html (SPA)
-        if path.startswith("c/"):
-            public_path = static_dir / "public_collection.html"
-            if public_path.exists():
-                return FileResponse(public_path)
-        
-        index_path = static_dir / "index.html"
-        if index_path.exists():
-            return FileResponse(index_path)
-        
-        from fastapi import HTTPException
         raise HTTPException(status_code=404)
+    
+    # Статические файлы
+    file_path = static_dir / path
+    if file_path.exists() and file_path.is_file():
+        return FileResponse(file_path)
+    
+    # Для всех остальных путей отдаём index.html (SPA)
+    index_path = static_dir / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
+    
+    raise HTTPException(status_code=404)

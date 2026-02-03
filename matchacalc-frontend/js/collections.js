@@ -324,11 +324,14 @@ const Collections = {
             return;
         }
         
+        // Data URI для placeholder (серый прямоугольник)
+        const placeholderDataUri = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect fill="#f5f5f5" width="300" height="200"/><text x="150" y="100" text-anchor="middle" fill="#999" font-family="sans-serif" font-size="14">Нет фото</text></svg>');
+        
         grid.innerHTML = lots.map(lot => `
             <div class="lot-card" data-id="${lot.id}">
-                <img src="${lot.layout_image_url || 'img/placeholder.png'}" 
+                <img src="${lot.layout_image_url || placeholderDataUri}" 
                      alt="Планировка" class="lot-card-image"
-                     onerror="this.src='img/placeholder.png'">
+                     onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='${placeholderDataUri}';}">
                 <div class="lot-card-info">
                     <div class="lot-card-address">${this.escapeHtml(lot.address)}</div>
                     <div class="lot-card-price">

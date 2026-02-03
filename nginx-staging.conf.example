@@ -1,15 +1,28 @@
 # Конфиг Nginx для стагинга: staging.commercial-invest.ru
 # Скопируй на VPS в /etc/nginx/sites-available/staging.commercial-invest.ru
+# После изменения: sudo nginx -t && sudo systemctl reload nginx
 
 server {
     listen 80;
     server_name staging.commercial-invest.ru;
 
-    # Фронт стагинга (если scp создал вложенную папку — используй второй вариант)
-    root /var/www/staging;
-    # root /var/www/staging/matchacalc-frontend;   # раскомментируй, если index.html лежит внутри matchacalc-frontend
+    # Фронт стагинга
+    root /var/www/staging/matchacalc-frontend;
 
     index index.html;
+
+    # Публичные коллекции - отдельная страница
+    location ~ ^/c/ {
+        try_files /public_collection.html =404;
+    }
+
+    # Загруженные изображения (планировки)
+    location /uploads/ {
+        alias /root/matchacalc-backend-staging/matchacalc-backend/static/uploads/;
+        try_files $uri =404;
+    }
+
+    # Основной фронтенд
     location / {
         try_files $uri $uri/ /index.html;
     }
