@@ -84,9 +84,9 @@ const API = {
         return this.get('/reports/scenarios');
     },
     
-    // Получить список отчётов
+    // Получить список отчётов (trailing slash для совместимости с FastAPI)
     async getReports() {
-        return this.get('/reports');
+        return this.get('/reports/');
     },
     
     // Расчёт калькулятора

@@ -224,6 +224,11 @@
             color: var(--color-secondary);
             margin-bottom: 6px;
         }
+        .label-hint {
+            font-weight: 400;
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
         .form-group select, .form-group input {
             width: 100%;
             padding: 10px 12px;
@@ -412,16 +417,41 @@
                     </div>
                 </div>
                 
+                <div class="form-group">
+                    <label>WACC, % <span class="label-hint">(необязательно, для NPV)</span></label>
+                    <input type="number" id="calc-wacc" min="0" max="100" step="0.1" placeholder="Например, 12">
+                </div>
+                
                 <button id="btn-calculate" class="btn-calculate">Рассчитать</button>
                 
                 <div id="results" class="results hidden">
                     <div class="result-row">
-                        <span class="result-label">Окупаемость</span>
+                        <span class="result-label">Окупаемость: аренда</span>
+                        <span id="res-payback-rent" class="result-value"></span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Окупаемость: аренда + продажа</span>
                         <span id="res-payback" class="result-value"></span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Срок удвоения стоимости</span>
+                        <span id="res-double" class="result-value"></span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Прибыль от аренды</span>
+                        <span id="res-rent" class="result-value"></span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Прибыль от продажи</span>
+                        <span id="res-sale" class="result-value"></span>
                     </div>
                     <div class="result-row">
                         <span class="result-label">Совокупная прибыль</span>
                         <span id="res-profit" class="result-value highlight"></span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">NPV</span>
+                        <span id="res-npv" class="result-value"></span>
                     </div>
                     <div class="result-row">
                         <span class="result-label">IRR</span>
@@ -555,27 +585,40 @@
             btn.textContent = 'Считаем...';
 
             try {
-                // Используем /calc/preview с данными лота
+                const payload = {
+                    purchase_price: currentLot.original_price,
+                    area: currentLot.area,
+                    location_group_id: currentLot.location_group_id,
+                    holding_years: parseInt(document.getElementById('calc-years').value),
+                    scenario_id: document.getElementById('calc-scenario').value,
+                    report_id: parseInt(document.getElementById('calc-report').value)
+                };
+                const waccVal = parseFloat(document.getElementById('calc-wacc').value);
+                if (!isNaN(waccVal) && waccVal >= 0) payload.wacc = waccVal;
+
                 const res = await fetch(`${API_BASE}/calc/preview`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        purchase_price: currentLot.original_price,
-                        area: currentLot.area,
-                        location_group_id: currentLot.location_group_id,
-                        holding_years: parseInt(document.getElementById('calc-years').value),
-                        scenario_id: document.getElementById('calc-scenario').value,
-                        report_id: parseInt(document.getElementById('calc-report').value)
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
                 if (!res.ok) throw new Error('Calculation failed');
                 const result = await res.json();
-                
-                document.getElementById('res-payback').textContent = formatYears(result.static_metrics.payback_rent_and_sale_years);
-                document.getElementById('res-profit').textContent = formatPrice(result.dynamic_metrics.total_profit) + 
-                    ` (+${result.dynamic_metrics.total_profit_percent.toFixed(1)}%)`;
-                document.getElementById('res-irr').textContent = result.dynamic_metrics.irr_percent.toFixed(2) + '%';
+                const sm = result.static_metrics;
+                const dm = result.dynamic_metrics;
+
+                document.getElementById('res-payback-rent').textContent = formatYears(sm.payback_rent_years);
+                document.getElementById('res-payback').textContent = formatYears(sm.payback_rent_sale_years);
+                document.getElementById('res-double').textContent = formatYears(sm.double_price_years);
+                document.getElementById('res-rent').textContent = formatPrice(dm.rent_income_total) +
+                    ` (${dm.rent_income_yield_percent.toFixed(1)}%)`;
+                document.getElementById('res-sale').textContent = formatPrice(dm.sale_profit) +
+                    ` (${dm.sale_profit_percent.toFixed(1)}%)`;
+                document.getElementById('res-profit').textContent = formatPrice(dm.total_profit) +
+                    ` (+${dm.total_profit_percent.toFixed(1)}%)`;
+                document.getElementById('res-npv').textContent = dm.npv != null
+                    ? formatPrice(dm.npv) : '— (укажите WACC)';
+                document.getElementById('res-irr').textContent = dm.irr_percent.toFixed(2) + '%';
                 
                 document.getElementById('results').classList.remove('hidden');
             } catch (e) {

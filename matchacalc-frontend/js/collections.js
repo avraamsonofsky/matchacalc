@@ -479,7 +479,7 @@ const Collections = {
         
         // Загружаем отчёты
         try {
-            const reports = await API.get('/reports');
+            const reports = await API.get('/reports/');
             const select = document.getElementById('lot-report');
             select.innerHTML = reports.map(r => 
                 `<option value="${r.id}">${r.provider} • ${r.period}</option>`
