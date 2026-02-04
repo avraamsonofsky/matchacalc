@@ -217,6 +217,12 @@ const Collections = {
                 });
                 collectionId = collection.id;
                 this.currentCollectionId = collectionId;
+            } else {
+                // Обновляем существующую (название и описание)
+                await API.put(`/collections/${collectionId}`, {
+                    name,
+                    description: description || null
+                });
             }
             
             // Обновляем список и закрываем
