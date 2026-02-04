@@ -415,14 +415,6 @@
             <div class="calc-section">
                 <h3>Рассчитать доходность</h3>
                 
-                <div class="form-group slider-group">
-                    <label>
-                        <span>Срок владения</span>
-                        <span id="years-value" class="years-display">7 лет</span>
-                    </label>
-                    <input type="range" id="calc-years" class="slider" min="1" max="15" value="7" style="--value-percent: 46%;">
-                </div>
-                
                 <div class="form-row">
                     <div class="form-group">
                         <label>Прогноз</label>
@@ -441,6 +433,14 @@
                 <div class="form-group">
                     <label>WACC, % <span class="label-hint">(необязательно, для NPV)</span></label>
                     <input type="number" id="calc-wacc" min="0" max="100" step="0.1" placeholder="Например, 12">
+                </div>
+                
+                <div class="form-group slider-group">
+                    <label>
+                        <span>Срок владения</span>
+                        <span id="years-value" class="years-display">7 лет</span>
+                    </label>
+                    <input type="range" id="calc-years" class="slider" min="1" max="15" value="7" style="--value-percent: 46%;">
                 </div>
                 
                 <button id="btn-calculate" class="btn-calculate">Рассчитать</button>
@@ -604,12 +604,19 @@
             document.getElementById('lot-modal').classList.remove('hidden');
         }
 
-        async function calculate() {
+        let calcDebounceTimer = null;
+
+        async function calculate(silent = false) {
             if (!currentLot) return;
             
             const btn = document.getElementById('btn-calculate');
-            btn.disabled = true;
-            btn.textContent = 'Считаем...';
+            const reportSelect = document.getElementById('calc-report');
+            if (!reportSelect || !reportSelect.value) return;
+            
+            if (!silent) {
+                btn.disabled = true;
+                btn.textContent = 'Считаем...';
+            }
 
             try {
                 const payload = {
@@ -648,12 +655,20 @@
                 document.getElementById('res-irr').textContent = dm.irr_percent.toFixed(2) + '%';
                 
                 document.getElementById('results').classList.remove('hidden');
+                
+                if (!silent) {
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
             } catch (e) {
-                console.error('Calc error:', e);
-                alert('Ошибка расчёта');
+                if (!silent) {
+                    console.error('Calc error:', e);
+                    alert('Ошибка расчёта');
+                }
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Рассчитать';
+                if (!silent) {
+                    btn.disabled = false;
+                    btn.textContent = 'Рассчитать';
+                }
             }
         }
 
@@ -704,9 +719,12 @@
         document.getElementById('calc-years').addEventListener('input', function() {
             document.getElementById('years-value').textContent = this.value + ' лет';
             updateSlider(this);
+            if (!currentLot) return;
+            if (calcDebounceTimer) clearTimeout(calcDebounceTimer);
+            calcDebounceTimer = setTimeout(() => calculate(true), 400);
         });
 
-        document.getElementById('btn-calculate').addEventListener('click', calculate);
+        document.getElementById('btn-calculate').addEventListener('click', () => calculate(false));
 
         // Закрытие модалки лота
         document.querySelectorAll('#lot-modal .modal-close, #lot-modal .modal-overlay').forEach(el => {
