@@ -295,15 +295,36 @@
         
         .results {
             margin-top: 24px;
-            padding: 16px;
-            background: #f8f9fa;
+        }
+        .results-block {
             border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+        .results-block:last-child { margin-bottom: 0; }
+        .results-block-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+        .results-static {
+            background: #f0f4ff;
+            border: 1px solid rgba(46, 91, 246, 0.2);
+        }
+        .results-dynamic {
+            background: #f8fff0;
+            border: 1px solid rgba(76, 175, 80, 0.25);
         }
         .result-row {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
         }
         .result-row:last-child { border-bottom: none; }
         .result-label { color: var(--color-secondary); }
@@ -425,37 +446,43 @@
                 <button id="btn-calculate" class="btn-calculate">Рассчитать</button>
                 
                 <div id="results" class="results hidden">
-                    <div class="result-row">
-                        <span class="result-label">Окупаемость: аренда</span>
-                        <span id="res-payback-rent" class="result-value"></span>
+                    <div class="results-block results-static">
+                        <div class="results-block-title">Статичные показатели</div>
+                        <div class="result-row">
+                            <span class="result-label">Окупаемость: аренда</span>
+                            <span id="res-payback-rent" class="result-value"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Окупаемость: аренда + продажа</span>
+                            <span id="res-payback" class="result-value"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Срок удвоения стоимости</span>
+                            <span id="res-double" class="result-value"></span>
+                        </div>
                     </div>
-                    <div class="result-row">
-                        <span class="result-label">Окупаемость: аренда + продажа</span>
-                        <span id="res-payback" class="result-value"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Срок удвоения стоимости</span>
-                        <span id="res-double" class="result-value"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Прибыль от аренды</span>
-                        <span id="res-rent" class="result-value"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Прибыль от продажи</span>
-                        <span id="res-sale" class="result-value"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">Совокупная прибыль</span>
-                        <span id="res-profit" class="result-value highlight"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">NPV</span>
-                        <span id="res-npv" class="result-value"></span>
-                    </div>
-                    <div class="result-row">
-                        <span class="result-label">IRR</span>
-                        <span id="res-irr" class="result-value"></span>
+                    <div class="results-block results-dynamic">
+                        <div class="results-block-title">Динамические показатели</div>
+                        <div class="result-row">
+                            <span class="result-label">Прибыль от аренды</span>
+                            <span id="res-rent" class="result-value"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Прибыль от продажи</span>
+                            <span id="res-sale" class="result-value"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">Совокупная прибыль</span>
+                            <span id="res-profit" class="result-value highlight"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">NPV</span>
+                            <span id="res-npv" class="result-value"></span>
+                        </div>
+                        <div class="result-row">
+                            <span class="result-label">IRR</span>
+                            <span id="res-irr" class="result-value"></span>
+                        </div>
                     </div>
                 </div>
             </div>

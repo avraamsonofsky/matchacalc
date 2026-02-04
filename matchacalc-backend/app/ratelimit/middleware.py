@@ -30,6 +30,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             return response
         
+        # Публичные коллекции: гость без токена может считать без лимита
+        auth_header = request.headers.get("Authorization")
+        if request.url.path == "/api/v1/calc/preview" and (not auth_header or not auth_header.startswith("Bearer ")):
+            response = await call_next(request)
+            return response
+        
         # Определяем ключ для rate-limiting
         user_id = None
         subscription_status = None
