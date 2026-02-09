@@ -202,7 +202,7 @@
         border-radius: 8px;
     }
     
-    /* Форма */
+    /* Форма — удобные зоны нажатия на мобильных */
     .form-row {
         grid-template-columns: 1fr;
         gap: var(--spacing-sm);
@@ -210,6 +210,12 @@
     
     .form-group-compact {
         margin-bottom: var(--spacing-sm);
+    }
+    
+    .form-group-compact input,
+    .form-group-compact select,
+    .calculator-card-compact .slider-modern {
+        min-height: 44px;
     }
     
     .form-group-compact label {
@@ -258,12 +264,24 @@
         margin-top: 8px;
     }
     
-    /* Кнопка расчёта */
+    /* Кнопка расчёта — минимум 44px по высоте для тапа, не липкая */
     .btn-calculate-compact {
         padding: 16px var(--spacing-md);
+        min-height: 48px;
         font-size: var(--font-size-body);
         border-radius: 6px;
         margin-top: var(--spacing-md);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Результаты: отступ при скролле под фиксированный навбар, блок с кнопкой уезжает вверх */
+    .results-panel-compact {
+        scroll-margin-top: 72px;
+    }
+    
+    .calculator-section {
+        scroll-margin-top: 72px;
     }
     
     /* Результаты */

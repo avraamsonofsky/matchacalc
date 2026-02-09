@@ -28,6 +28,17 @@ a, button, input, select, textarea {
     outline: none;
 }
 
+/* Мобильные: быстрый отклик на тап без задержки 300ms */
+@media (max-width: 768px) {
+    html, body {
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+    }
+    a, button, input, select, textarea, [role="button"] {
+        touch-action: manipulation;
+    }
+}
+
 a:focus, button:focus {
     outline: none;
 }
