@@ -61,6 +61,15 @@
     text-align: center;
 }
 
+.hero-cta-wrapper {
+    position: relative;
+    z-index: 1;
+    margin-top: var(--spacing-md);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
 .hero-cta-modern {
     display: inline-flex;
     align-items: center;

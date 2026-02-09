@@ -350,47 +350,46 @@
         font-size: var(--font-size-small);
     }
     
-    /* Таблица сравнения - мобильная версия */
+    /* Таблица сравнения — мобильная: вертикальный список, без узких колонок */
     .comparison-table {
         border-radius: 8px;
         overflow: hidden;
     }
     
     .comparison-table-header {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        padding: var(--spacing-sm);
-        font-size: 12px;
-    }
-    
-    .comparison-table-header .column-header {
-        text-align: center;
-        font-size: 11px;
-    }
-    
-    .comparison-table-header .benefits-col {
-        text-align: left;
+        display: none;
     }
     
     .comparison-row {
-        display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        padding: var(--spacing-sm);
-        gap: var(--spacing-xs);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        padding: var(--spacing-md);
+        border-bottom: 1px solid var(--color-border);
         align-items: center;
     }
     
-    .benefit-name {
-        font-size: 13px;
-        font-weight: var(--font-weight-normal);
+    .comparison-row:last-child {
+        border-bottom: none;
     }
     
-    .comparison-value {
-        text-align: center;
+    .benefit-name {
+        width: 100%;
+        font-size: 14px;
+        font-weight: var(--font-weight-normal);
+        line-height: 1.4;
+        margin: 0;
+    }
+    
+    .comparison-row .comparison-value {
+        display: inline-flex;
+        align-items: center;
+        text-align: left;
+        font-size: 13px;
     }
     
     .check-icon, .cross-icon {
-        font-size: 16px;
+        font-size: 18px;
     }
     
     /* Футер */

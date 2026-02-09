@@ -4,13 +4,11 @@ html {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     height: auto;
-    overscroll-behavior: none;
 }
 
 body {
     overflow-x: hidden;
     height: auto;
-    overscroll-behavior-y: none;
 }
 
 .fullpage-container {
@@ -394,15 +392,15 @@ body {
     line-height: var(--line-height-small);
 }
 
-/* Футер с ссылками */
+/* Футер с ссылками — в потоке, не поверх контента */
 .footer-links {
-    position: absolute;
-    bottom: var(--spacing-md);
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-md) var(--spacing-sm);
     text-align: center;
     font-size: var(--font-size-xs);
     color: var(--color-text-muted);
+    z-index: 0;
 }
 
 .footer-links a {

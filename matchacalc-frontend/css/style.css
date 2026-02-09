@@ -28,11 +28,11 @@ a, button, input, select, textarea {
     outline: none;
 }
 
-/* Мобильные: быстрый отклик на тап без задержки 300ms */
+/* Мобильные: не блокируем скролл, только интерактивным элементам убираем задержку */
 @media (max-width: 768px) {
     html, body {
-        touch-action: manipulation;
         -webkit-text-size-adjust: 100%;
+        touch-action: pan-y pan-x;
     }
     a, button, input, select, textarea, [role="button"] {
         touch-action: manipulation;
