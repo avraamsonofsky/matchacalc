@@ -375,39 +375,37 @@
     
     if (scrollToCalcBtn && calculatorSection) {
         const performScroll = () => {
-            console.log('Performing scroll to calculator');
             const target = document.getElementById('calculator');
-            if (target) {
-                // Прямой переход к элементу с учетом фиксированного навбара
-                // Мы хотим, чтобы верхняя граница секции была сразу под навбаром
-                const navbarHeight = 70;
-                const targetY = target.offsetTop - navbarHeight;
-
-                window.scrollTo({
-                    top: targetY,
-                    behavior: 'smooth'
-                });
-                console.log('Scroll to Y:', targetY);
-            } else {
-                console.error('#calculator not found during scroll attempt');
-            }
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const navbarHeight = 70;
+            const targetY = window.scrollY + rect.top - navbarHeight;
+            const isMobile = window.innerWidth <= 768;
+            window.scrollTo({
+                top: Math.max(0, targetY),
+                behavior: isMobile ? 'auto' : 'smooth'
+            });
         };
 
         const handleEvent = (e) => {
-            console.log('Event triggered:', e.type);
             e.preventDefault();
             e.stopPropagation();
             performScroll();
         };
-        
+
         scrollToCalcBtn.addEventListener('click', handleEvent);
-        scrollToCalcBtn.addEventListener('touchstart', handleEvent, { passive: false });
-        // Дополнительно вешаем на обертку на случай проблем с попаданием
+        scrollToCalcBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            performScroll();
+        }, { passive: false });
         const wrapper = scrollToCalcBtn.parentElement;
         if (wrapper) {
             wrapper.addEventListener('click', handleEvent);
+            wrapper.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                performScroll();
+            }, { passive: false });
         }
-        console.log('Scroll events attached to button and wrapper');
     }
 
     // Затем инициализируем Auth (проверка авторизации и обновление навигации)

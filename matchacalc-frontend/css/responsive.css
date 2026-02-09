@@ -162,11 +162,18 @@
         font-size: 12px;
     }
     
-    /* Калькулятор секция */
+    /* Калькулятор секция — без sticky, чтобы при скролле к результатам форма уезжала вверх */
     .fullpage-section.calculator-section {
         min-height: auto;
         padding: var(--spacing-md) var(--spacing-sm);
-        padding-top: 70px; /* Отступ от шапки при скролле */
+        padding-top: 70px;
+    }
+    
+    .fullpage-section.calculator-section .section-header,
+    .fullpage-section.calculator-section .calculator-card-compact,
+    .fullpage-section.calculator-section .results-panel-compact {
+        position: relative;
+        top: auto;
     }
     
     .section-header {
