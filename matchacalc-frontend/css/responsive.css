@@ -290,8 +290,8 @@
     .results-panel-compact .metric-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 4px;
-        padding: var(--spacing-sm) 0;
+        gap: 2px;
+        padding: 4px 0;
     }
     
     .results-panel-compact .metric-label {
@@ -303,13 +303,21 @@
         font-weight: var(--font-weight-medium);
     }
     
-    /* Мобильная версия: сумма и процент в одну строку (не меняем) */
+    /* Мобильная версия: сумма и процент в одну строку, прижаты к одному уровню справа */
     .results-panel-compact .metric-values {
         display: flex;
         flex-direction: row;
-        gap: var(--spacing-sm);
+        gap: 6px;
         align-items: baseline;
         justify-content: flex-end;
+        width: 100%;
+        text-align: right;
+    }
+    
+    .results-panel-compact .metric-values .metric-value,
+    .results-panel-compact .metric-values .metric-value-small {
+        margin: 0;
+        flex-shrink: 0;
     }
     
     /* Дисклеймер */

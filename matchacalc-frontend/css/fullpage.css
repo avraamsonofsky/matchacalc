@@ -30,15 +30,15 @@ body {
 }
 
 /* Калькулятор секция */
-        .fullpage-section.calculator-section {
-            background-color: var(--bg-primary);
-            padding-top: 20px;
-            padding-bottom: 40px;
-            min-height: calc(100vh - 70px);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
+.fullpage-section.calculator-section {
+    background-color: var(--bg-primary);
+    padding-top: 20px;
+    padding-bottom: 24px;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
 
 /* Заголовок секции */
 .section-header {
@@ -121,17 +121,17 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
-    max-width: 1100px;
+    max-width: 1000px;
     margin: 0 auto;
     width: 100%;
-    align-items: stretch;
+    align-items: start;
 }
 
 .results-panel-compact {
     background-color: var(--bg-primary);
     border: 1px solid var(--color-border);
-    padding: var(--spacing-md);
-    min-height: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
@@ -139,7 +139,7 @@ body {
 .calculator-card-compact {
     background-color: var(--bg-primary);
     border: 1px solid var(--color-border);
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
 }
 
 /* Компактные формы */
@@ -147,11 +147,11 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 6px;
 }
 
 .form-group-compact {
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 6px;
 }
 
 .form-group-compact label {
@@ -339,17 +339,17 @@ body {
 }
 
 .results-panel-compact .results-section {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
 }
 
 .results-panel-compact .results-section-title {
     font-size: var(--font-size-small);
-    padding-bottom: 4px;
-    margin-bottom: var(--spacing-xs);
+    padding-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .results-panel-compact .metric-row {
-    padding: var(--spacing-xs) 0;
+    padding: 3px 0;
 }
 
 .results-panel-compact .metric-label {
@@ -389,15 +389,20 @@ body {
     font-weight: var(--font-weight-medium);
 }
 
-/* Дисклеймер компактный */
+/* Дисклеймер компактный — сразу под блоком калькулятора */
 .disclaimer-compact {
-    max-width: 1100px;
+    max-width: 1000px;
     margin: var(--spacing-md) auto 0;
+    padding: var(--spacing-sm) var(--spacing-md);
     text-align: center;
     font-size: var(--font-size-xs);
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     letter-spacing: var(--letter-spacing-xs);
     line-height: var(--line-height-small);
+}
+
+.disclaimer-compact p {
+    margin: 0;
 }
 
 /* Футер с ссылками — в потоке, не поверх контента */
@@ -418,10 +423,6 @@ body {
 
 .footer-links a:hover {
     text-decoration: underline;
-}
-
-.disclaimer-compact p {
-    margin-bottom: var(--spacing-xs);
 }
 
 .disclaimer-compact a {

@@ -13,12 +13,18 @@
     <link rel="stylesheet" href="css/typography.css">
     <link rel="stylesheet" href="css/forms-modern.css">
     <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="navbar-container">
             <a href="index.html" class="logo">LatteCalc</a>
-            <ul class="nav-menu">
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Меню">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="nav-menu">
                 <li><a href="login.html" id="nav-login">Вход</a></li>
                 <li><a href="register.html" id="nav-register">Регистрация</a></li>
                 <li><a href="subscription.html" class="active">Подписка</a></li>
@@ -94,6 +100,23 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Инициализация авторизации
             await Auth.init();
+            
+            var mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            var navMenuEl = document.getElementById('nav-menu');
+            if (mobileMenuBtn && navMenuEl) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenuBtn.classList.toggle('active');
+                    navMenuEl.classList.toggle('mobile-open');
+                    navMenuEl.style.display = navMenuEl.classList.contains('mobile-open') ? 'flex' : '';
+                });
+                navMenuEl.querySelectorAll('a').forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        navMenuEl.classList.remove('mobile-open');
+                        navMenuEl.style.display = '';
+                        mobileMenuBtn.classList.remove('active');
+                    });
+                });
+            }
             
             // Обновление UI в зависимости от подписки
             updateSubscriptionUI();
