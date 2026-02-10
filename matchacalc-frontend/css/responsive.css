@@ -28,20 +28,6 @@
         grid-template-columns: 1fr;
     }
     
-    .comparison-table-header,
-    .comparison-row {
-        grid-template-columns: 1fr auto;
-        gap: var(--spacing-sm);
-    }
-    
-    .column-header {
-        text-align: left;
-        padding: var(--spacing-xs) 0;
-    }
-    
-    .comparison-value {
-        text-align: left;
-    }
 }
 
 /* Мобильные устройства */
@@ -352,46 +338,22 @@
         font-size: var(--font-size-small);
     }
     
-    /* Таблица сравнения — мобильная: вертикальный список, без узких колонок */
     .comparison-table {
         border-radius: 8px;
         overflow: hidden;
     }
     
-    .comparison-table-header {
-        display: none;
-    }
-    
     .comparison-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px 16px;
-        padding: var(--spacing-md);
-        border-bottom: 1px solid var(--color-border);
-        align-items: center;
-    }
-    
-    .comparison-row:last-child {
-        border-bottom: none;
+        padding: var(--spacing-xs) var(--spacing-md);
     }
     
     .benefit-name {
-        width: 100%;
         font-size: 14px;
-        font-weight: var(--font-weight-normal);
         line-height: 1.4;
-        margin: 0;
     }
     
-    .comparison-row .comparison-value {
-        display: inline-flex;
-        align-items: center;
-        text-align: left;
-        font-size: 13px;
-    }
-    
-    .check-icon, .cross-icon {
-        font-size: 18px;
+    .benefit-name .check-icon {
+        font-size: 16px;
     }
     
     /* Футер */
@@ -427,18 +389,8 @@
         padding: 10px 12px;
     }
     
-    /* Таблица преимуществ на маленьких экранах */
-    .comparison-table-header {
-        grid-template-columns: 1fr auto;
-        font-size: 10px;
-    }
-    
-    .comparison-row {
-        grid-template-columns: 1fr auto;
-    }
-    
     .benefit-name {
-        font-size: 12px;
+        font-size: 13px;
     }
     
     .benefits-header h2 {
