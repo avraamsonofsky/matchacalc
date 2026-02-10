@@ -317,8 +317,10 @@
         font-weight: var(--font-weight-medium);
     }
     
+    /* Мобильная версия: сумма и процент в одну строку (не меняем) */
     .results-panel-compact .metric-values {
         display: flex;
+        flex-direction: row;
         gap: var(--spacing-sm);
         align-items: baseline;
         justify-content: flex-end;
