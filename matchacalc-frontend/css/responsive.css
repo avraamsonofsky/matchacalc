@@ -30,7 +30,7 @@
     
     .comparison-table-header,
     .comparison-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr auto;
         gap: var(--spacing-sm);
     }
     
@@ -427,12 +427,12 @@
     
     /* Таблица преимуществ на маленьких экранах */
     .comparison-table-header {
-        grid-template-columns: 1.5fr 1fr 1fr;
+        grid-template-columns: 1fr auto;
         font-size: 10px;
     }
     
     .comparison-row {
-        grid-template-columns: 1.5fr 1fr 1fr;
+        grid-template-columns: 1fr auto;
     }
     
     .benefit-name {
