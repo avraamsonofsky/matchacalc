@@ -303,15 +303,15 @@
         font-weight: var(--font-weight-medium);
     }
     
-    /* Мобильная версия: сумма и процент в одну строку, прижаты к одному уровню справа */
+    /* Мобильная версия: сумма и процент в одну строку, прижаты к левому краю */
     .results-panel-compact .metric-values {
         display: flex;
         flex-direction: row;
         gap: 6px;
         align-items: baseline;
-        justify-content: flex-end;
+        justify-content: flex-start;
         width: 100%;
-        text-align: right;
+        text-align: left;
     }
     
     .results-panel-compact .metric-values .metric-value,
