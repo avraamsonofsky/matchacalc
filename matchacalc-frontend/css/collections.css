@@ -305,6 +305,14 @@
     background: var(--bg-secondary);
 }
 
+/* Единая высота кнопок в модалках */
+.modal .btn-primary,
+.modal .btn-secondary {
+    min-height: 44px;
+    height: 44px;
+    box-sizing: border-box;
+}
+
 .btn-link {
     background: none;
     border: none;
@@ -389,6 +397,7 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid var(--color-border);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .lot-card:hover {
