@@ -496,6 +496,7 @@
         <img id="fullscreen-image" src="" alt="Планировка">
     </div>
 
+    <script src="js/debug.js"></script>
     <script>
         // Placeholder как data URI (чтобы избежать бесконечного цикла загрузки)
         const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
@@ -592,7 +593,7 @@
                         `<option value="${r.id}">${r.provider} • ${r.period}</option>`
                     ).join('');
                 } catch (e) {
-                    console.error(e);
+                    AppDebug.error(e);
                 }
             }
             
@@ -662,7 +663,7 @@
                 }
             } catch (e) {
                 if (!silent) {
-                    console.error('Calc error:', e);
+                    AppDebug.error('Calc error:', e);
                     alert('Ошибка расчёта');
                 }
             } finally {

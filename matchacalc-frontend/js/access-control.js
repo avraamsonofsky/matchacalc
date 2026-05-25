@@ -42,7 +42,7 @@ const AccessControl = {
                 Auth.user = userData;
             }
         } catch (error) {
-            console.error('Ошибка загрузки пользователя:', error);
+            AppDebug.error('Ошибка загрузки пользователя:', error);
             localStorage.removeItem('access_token');
             this.user = null;
             this.subscription = null;

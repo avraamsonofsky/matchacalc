@@ -13,19 +13,14 @@ const Calculator = {
     
     async loadDropdowns() {
         try {
-            console.log('Начинаем загрузку данных для выпадающих списков...');
-            
-            // Загружаем районы
-            console.log('Загружаем районы...');
             const locations = await API.getLocationGroups();
-            console.log('Получены районы:', locations);
             const locationSelect = document.getElementById('location-group');
             if (!locationSelect) {
-                console.error('Элемент location-group не найден!');
+                AppDebug.error('Элемент location-group не найден');
                 return;
             }
             if (!locations || locations.length === 0) {
-                console.warn('Районы не получены или пустой массив');
+                AppDebug.warn('Районы не получены или пустой массив');
             } else {
                 locations.forEach(loc => {
                     const option = document.createElement('option');
@@ -33,20 +28,16 @@ const Calculator = {
                     option.textContent = loc.name;
                     locationSelect.appendChild(option);
                 });
-                console.log(`Добавлено ${locations.length} районов`);
             }
             
-            // Загружаем сценарии
-            console.log('Загружаем сценарии...');
             const scenarios = await API.getScenarios();
-            console.log('Получены сценарии:', scenarios);
             const scenarioSelect = document.getElementById('scenario');
             if (!scenarioSelect) {
-                console.error('Элемент scenario не найден!');
+                AppDebug.error('Элемент scenario не найден');
                 return;
             }
             if (!scenarios || scenarios.length === 0) {
-                console.warn('Сценарии не получены или пустой массив');
+                AppDebug.warn('Сценарии не получены или пустой массив');
             } else {
                 scenarios.forEach(scenario => {
                     const option = document.createElement('option');
@@ -54,27 +45,20 @@ const Calculator = {
                     option.textContent = scenario.name;
                     scenarioSelect.appendChild(option);
                 });
-                console.log(`Добавлено ${scenarios.length} сценариев`);
-                
-                // Предустановка на "Базовый"
                 const baseScenario = scenarios.find(s => s.name.toLowerCase().includes('базов'));
                 if (baseScenario) {
                     scenarioSelect.value = baseScenario.id;
-                    console.log('Установлен базовый сценарий по умолчанию');
                 }
             }
             
-            // Загружаем отчёты
-            console.log('Загружаем отчёты...');
             const reports = await API.getReports();
-            console.log('Получены отчёты:', reports);
             const reportSelect = document.getElementById('report');
             if (!reportSelect) {
-                console.error('Элемент report не найден!');
+                AppDebug.error('Элемент report не найден');
                 return;
             }
             if (!reports || reports.length === 0) {
-                console.warn('Отчёты не получены или пустой массив');
+                AppDebug.warn('Отчёты не получены или пустой массив');
             } else {
                 reports.forEach(report => {
                     const option = document.createElement('option');
@@ -85,14 +69,10 @@ const Calculator = {
                     option.textContent = `${providerName} • ${periodFormatted}`;
                     reportSelect.appendChild(option);
                 });
-                console.log(`Добавлено ${reports.length} отчётов`);
             }
-            
-            console.log('Загрузка данных завершена успешно!');
         } catch (error) {
-            console.error('Ошибка загрузки данных:', error);
-            console.error('Детали ошибки:', error.message, error.stack);
-            alert('Ошибка загрузки данных. Проверьте консоль браузера (F12).');
+            AppDebug.error('Ошибка загрузки данных:', error);
+            alert(AppDebug.userMessage('Не удалось загрузить данные для калькулятора', error));
         }
     },
     
@@ -297,9 +277,9 @@ const Calculator = {
             Calculator.displayResults(result);
         } catch (error) {
             if (!silent) {
-                alert('Ошибка расчёта: ' + error.message);
+                alert(AppDebug.userMessage('Ошибка расчёта', error));
             }
-            console.error('Ошибка расчёта:', error);
+            AppDebug.error('Ошибка расчёта:', error);
         } finally {
             if (!silent) {
                 const calculateBtn = document.getElementById('calculate-btn');
@@ -405,28 +385,15 @@ const Calculator = {
 
 // Инициализация при загрузке
 function initCalculator() {
-    console.log('Инициализация калькулятора...');
-    console.log('DOM готов:', document.readyState);
-    
-    // Проверяем наличие элементов
     const locationSelect = document.getElementById('location-group');
     const scenarioSelect = document.getElementById('scenario');
     const reportSelect = document.getElementById('report');
-    
-    if (!locationSelect) {
-        console.error('Элемент location-group не найден в DOM!');
+
+    if (!locationSelect || !scenarioSelect || !reportSelect) {
+        AppDebug.error('Не найдены обязательные элементы формы калькулятора');
         return;
     }
-    if (!scenarioSelect) {
-        console.error('Элемент scenario не найден в DOM!');
-        return;
-    }
-    if (!reportSelect) {
-        console.error('Элемент report не найден в DOM!');
-        return;
-    }
-    
-    console.log('Все элементы найдены, запускаем инициализацию...');
+
     Calculator.init();
 }
 

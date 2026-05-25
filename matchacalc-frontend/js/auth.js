@@ -20,7 +20,7 @@ const Auth = {
             Auth.user = user;
             Auth.showAuthenticatedMenu(user);
         } catch (error) {
-            console.error('Ошибка проверки авторизации:', error);
+            AppDebug.error('Ошибка проверки авторизации:', error);
             localStorage.removeItem('access_token');
             Auth.user = null;
             Auth.showGuestMenu();
@@ -66,9 +66,6 @@ const Auth = {
     },
     
     showAuthenticatedMenu: (user) => {
-        console.log('showAuthenticatedMenu called with user:', user);
-        console.log('Subscription:', user.subscription);
-        
         const navLogin = document.getElementById('nav-login');
         const navRegister = document.getElementById('nav-register');
         const navProfile = document.getElementById('nav-profile');

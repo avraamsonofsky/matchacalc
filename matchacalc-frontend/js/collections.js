@@ -87,7 +87,7 @@ const Collections = {
             this.collections = await API.get('/collections');
             this.renderCollections();
         } catch (e) {
-            console.error('Ошибка загрузки коллекций:', e);
+            AppDebug.error('Ошибка загрузки коллекций:', e);
         }
     },
 
@@ -485,7 +485,7 @@ const Collections = {
                 `<option value="${r.id}">${r.provider} • ${r.period}</option>`
             ).join('');
         } catch (e) {
-            console.error('Ошибка загрузки отчётов:', e);
+            AppDebug.error('Ошибка загрузки отчётов:', e);
         }
         
         // Сохраняем ID лота для расчёта

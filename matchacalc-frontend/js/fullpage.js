@@ -31,9 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Кнопка "Начать расчёт" — плавная прокрутка к калькулятору с учётом шапки
     if (scrollToCalcBtn && calculatorSection) {
         // Убрали дублирующую логику, теперь она в index.html для быстрой инициализации
-        console.log('Scroll button initialization moved to index.html for faster response');
+        AppDebug.log('Scroll button initialization moved to index.html for faster response');
     } else {
-        console.warn('Scroll button or calculator section not found', { scrollToCalcBtn, calculatorSection });
+        AppDebug.warn('Scroll button or calculator section not found', { scrollToCalcBtn, calculatorSection });
     }
     
     // Слушатель scroll для навбара
@@ -44,5 +44,5 @@ document.addEventListener('DOMContentLoaded', () => {
         navbar.classList.remove('hidden');
     }
     
-    console.log('Simple scroll initialized');
+    AppDebug.log('Simple scroll initialized');
 });
